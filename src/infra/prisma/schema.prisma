@@ -1,0 +1,95 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model State {
+  id_state       Int              @id @default(autoincrement())
+  name           String
+  UtilityCompany UtilityCompany[]
+  Residence      Residence[]
+}
+
+model Customer {
+  id_customer  Int         @id @default(autoincrement())
+  cpf_cnpj     String      @unique
+  name         String
+  email        String?
+  mobile_phone String?
+  is_active    Boolean     @default(true)
+  Residence    Residence[]
+}
+
+model UtilityCompany {
+  id_utility_company             Int       @id @default(autoincrement())
+  name                           String
+  id_state                       Int
+  standard_rate                  Decimal?  @db.Decimal(10, 2)
+  off_peak_rate                  Decimal?  @db.Decimal(10, 2)
+  peak_rate                      Decimal?  @db.Decimal(10, 2)
+  intermediate_rate              Decimal?  @db.Decimal(10, 2)
+  end_first_intermediate_time    DateTime?
+  end_second_intermediate_time   DateTime?
+  end_peak_time                  DateTime?
+  start_first_intermediate_time  DateTime?
+  start_second_intermediate_time DateTime?
+  start_peak_time                DateTime?
+
+  State     State       @relation(fields: [id_state], references: [id_state])
+  Residence Residence[]
+}
+
+model Residence {
+  id_residence       Int     @id @default(autoincrement())
+  street             String
+  number             Int
+  complement         String?
+  neighborhood       String
+  city               String
+  id_state           Int
+  postal_code        String
+  id_utility_company Int
+  nickname           String
+  id_customer        Int
+
+  State          State          @relation(fields: [id_state], references: [id_state])
+  UtilityCompany UtilityCompany @relation(fields: [id_utility_company], references: [id_utility_company])
+  Customer       Customer       @relation(fields: [id_customer], references: [id_customer])
+  Hardware       Hardware[]
+}
+
+model Hardware {
+  id_hardware      Int     @id @default(autoincrement())
+  firmware_version String
+  hardware_version String
+  nickname         String?
+  id_residence     Int
+
+  Residence Residence @relation(fields: [id_residence], references: [id_residence])
+  Reading   Reading[]
+}
+
+model Reading {
+  id_reading      Int      @id @default(autoincrement())
+  energy_consumed Int
+  current_value   Int
+  voltage_value   Int
+  start_time      DateTime
+  end_time        DateTime
+  id_hardware     Int
+
+  Hardware Hardware @relation(fields: [id_hardware], references: [id_hardware])
+}
+
+model Log {
+  id_log            Int      @id @default(autoincrement())
+  route             String
+  request_type      String
+  request_body      String
+  response_body     String
+  request_timestamp DateTime @default(now())
+}
