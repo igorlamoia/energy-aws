@@ -11,6 +11,8 @@ import {
   CreateReadingSchema,
   CreateReadingDto,
 } from './schemas/reading.schema';
+import { Prisma } from '@prisma/client';
+import { IResponse } from 'src/core/response.interface';
 
 @Controller('readings')
 export class ReadingController {
@@ -32,7 +34,10 @@ export class ReadingController {
   }
 
   @Get()
-  findAll() {
-    return this.readingService.findAll();
+  async findAll(): Promise<IResponse<Prisma.ReadingUncheckedCreateInput[]>> {
+    return {
+      message: 'Readings fetched successfully',
+      data: await this.readingService.findAll(),
+    };
   }
 }
