@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Put } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Post,
+  Put,
+} from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CustomerDto, CustomerSchema } from './schemas/customer.schema';
 
@@ -43,6 +51,14 @@ export class CustomerController {
     return {
       message: 'Customer updated successfully',
       data: customer,
+    };
+  }
+
+  @Delete(':id')
+  async delete(@Param('id') id: number) {
+    await this.customerService.delete(Number(id));
+    return {
+      message: 'Customer deleted successfully',
     };
   }
 }
