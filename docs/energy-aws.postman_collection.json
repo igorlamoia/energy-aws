@@ -1,0 +1,145 @@
+{
+	"info": {
+		"_postman_id": "2673f976-a02b-4421-bbf3-cab5f10dde2e",
+		"name": "Energy AWS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "30658334"
+	},
+	"item": [
+		{
+			"name": "reading",
+			"item": [
+				{
+					"name": "readings",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}readings",
+							"host": [
+								"{{url}}readings"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "customer",
+			"item": [
+				{
+					"name": "customers",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}customers",
+							"host": [
+								"{{url}}customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "customer",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{url}}customers/{{id_user}}",
+							"host": [
+								"{{url}}customers"
+							],
+							"path": [
+								"{{id_user}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "customer",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"cpf_cnpj\": \"12345678901\",\r\n  \"name\": \"John Doe\",\r\n  \"email\": \"johndoe@example.com\",\r\n  \"mobile_phone\": \"1234567890\",\r\n  \"is_active\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}customers",
+							"host": [
+								"{{url}}customers"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "customer",
+					"request": {
+						"method": "PUT",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n  \"cpf_cnpj\": \"12345678901\",\r\n  \"name\": \"John Doess\",\r\n  \"email\": \"johndoe@example.com\",\r\n  \"mobile_phone\": \"1234567890\",\r\n  \"is_active\": true\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{url}}customers/{{id_user}}",
+							"host": [
+								"{{url}}customers"
+							],
+							"path": [
+								"{{id_user}}"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "customer",
+					"request": {
+						"method": "DELETE",
+						"header": [],
+						"url": {
+							"raw": "{{url}}customers/{{id_user}}",
+							"host": [
+								"{{url}}customers"
+							],
+							"path": [
+								"{{id_user}}"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "health",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}health",
+					"host": [
+						"{{url}}health"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
