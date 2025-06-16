@@ -10,34 +10,35 @@ datasource db {
 model State {
   id             Int              @id @default(autoincrement())
   name           String
+  abbreviation   String           @db.VarChar(2)
   UtilityCompany UtilityCompany[]
   Residence      Residence[]
 }
 
 model Customer {
   id           Int         @id @default(autoincrement())
-  cpf_cnpj     String      @unique
+  cpf_cnpj     String      @unique @db.VarChar(14)
   name         String
   email        String?
-  mobile_phone String?
+  mobile_phone String?     @db.VarChar(20)
   is_active    Boolean     @default(true)
   Residence    Residence[]
 }
 
 model UtilityCompany {
-  id                             Int       @id @default(autoincrement())
+  id                             Int    @id @default(autoincrement())
   name                           String
   id_state                       Int
-  standard_rate                  Decimal?  @db.Decimal(10, 2)
-  off_peak_rate                  Decimal?  @db.Decimal(10, 2)
-  peak_rate                      Decimal?  @db.Decimal(10, 2)
-  intermediate_rate              Decimal?  @db.Decimal(10, 2)
-  end_first_intermediate_time    DateTime?
-  end_second_intermediate_time   DateTime?
-  end_peak_time                  DateTime?
-  start_first_intermediate_time  DateTime?
-  start_second_intermediate_time DateTime?
-  start_peak_time                DateTime?
+  standard_rate                  Int
+  off_peak_rate                  Int
+  peak_rate                      Int
+  intermediate_rate              Int
+  end_first_intermediate_time    Int?
+  end_second_intermediate_time   Int?
+  end_peak_time                  Int?
+  start_first_intermediate_time  Int?
+  start_second_intermediate_time Int?
+  start_peak_time                Int?
 
   State     State       @relation(fields: [id_state], references: [id])
   Residence Residence[]
@@ -64,8 +65,8 @@ model Residence {
 
 model Hardware {
   id               Int     @id @default(autoincrement())
-  firmware_version String
-  hardware_version String
+  firmware_version String  @db.VarChar(20)
+  hardware_version String  @db.VarChar(20)
   nickname         String?
   id_residence     Int
 
