@@ -13,16 +13,20 @@ model State {
   abbreviation   String           @db.VarChar(2)
   UtilityCompany UtilityCompany[]
   Residence      Residence[]
+
+  @@map("state")
 }
 
 model Customer {
   id           Int         @id @default(autoincrement())
   cpf_cnpj     String      @unique @db.VarChar(14)
   name         String
-  email        String?
+  email        String?     @unique
   mobile_phone String?     @db.VarChar(20)
   is_active    Boolean     @default(true)
   Residence    Residence[]
+
+  @@map("customer")
 }
 
 model UtilityCompany {
@@ -42,6 +46,8 @@ model UtilityCompany {
 
   State     State       @relation(fields: [id_state], references: [id])
   Residence Residence[]
+
+  @@map("utility_company")
 }
 
 model Residence {
@@ -61,6 +67,8 @@ model Residence {
   UtilityCompany UtilityCompany @relation(fields: [id_utility_company], references: [id])
   Customer       Customer       @relation(fields: [id_customer], references: [id])
   Hardware       Hardware[]
+
+  @@map("residence")
 }
 
 model Hardware {
@@ -72,6 +80,8 @@ model Hardware {
 
   Residence Residence @relation(fields: [id_residence], references: [id])
   Reading   Reading[]
+
+  @@map("hardware")
 }
 
 model Reading {
@@ -84,6 +94,8 @@ model Reading {
   id_hardware     Int
 
   Hardware Hardware @relation(fields: [id_hardware], references: [id])
+
+  @@map("reading")
 }
 
 model Log {
@@ -93,4 +105,6 @@ model Log {
   request_body      String
   response_body     String
   request_timestamp DateTime @default(now())
+
+  @@map("log")
 }

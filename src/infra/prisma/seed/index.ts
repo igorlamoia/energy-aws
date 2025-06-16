@@ -11,14 +11,14 @@ async function main() {
       cpf_cnpj: '12345678905',
       email: 's@gmail.com',
       is_active: true,
-      mobile_phone: '321234567890',
+      mobile_phone: '321234567',
     },
   });
   await prisma.state.createMany({
     data: [
-      { id: 1, name: 'MG', abbreviation: 'Minas Gerais' },
-      { id: 2, name: 'SP', abbreviation: 'São Paulo' },
-      { id: 3, name: 'RJ', abbreviation: 'Rio de Janeiro' },
+      { id: 1, abbreviation: 'MG', name: 'Minas Gerais' },
+      { id: 2, abbreviation: 'SP', name: 'São Paulo' },
+      { id: 3, abbreviation: 'RJ', name: 'Rio de Janeiro' },
     ],
   });
 
