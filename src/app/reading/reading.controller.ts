@@ -20,17 +20,25 @@ export class ReadingController {
 
   @Post()
   async create(@Body() body: CreateReadingDto) {
-    const parsed = CreateReadingSchema.safeParse(body);
-    if (!parsed.success) {
-      throw new Error(JSON.stringify(parsed.error.format()));
-    }
+    const dto = CreateReadingSchema.parse(body);
 
-    return this.readingService.create(parsed.data);
+    return this.readingService.create(dto);
   }
 
   @Get(':id')
   findOne(@Param('id', ParseIntPipe) id: number) {
     return this.readingService.findOne(id);
+  }
+
+  @Get('hardware/:id_hardware')
+  async findByHardware(
+    @Param('id_hardware', ParseIntPipe) id_hardware: number,
+  ) {
+    const readings = await this.readingService.findByHardware(id_hardware);
+    return {
+      message: 'Readings fetched successfully',
+      data: readings,
+    };
   }
 
   @Get()

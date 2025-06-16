@@ -4,6 +4,7 @@ import {
   Delete,
   Get,
   Param,
+  ParseIntPipe,
   Post,
   Put,
 } from '@nestjs/common';
@@ -23,8 +24,8 @@ export class CustomerController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number) {
-    const customer = await this.customerService.findOne(Number(id));
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    const customer = await this.customerService.findOne(id);
 
     return {
       message: 'Customer fetched successfully',
@@ -44,10 +45,13 @@ export class CustomerController {
   }
 
   @Put(':id')
-  async update(@Param('id') id: number, @Body() body: CustomerDto) {
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() body: CustomerDto,
+  ) {
     const dto = CustomerSchema.parse(body);
 
-    const customer = await this.customerService.update(Number(id), dto);
+    const customer = await this.customerService.update(id, dto);
     return {
       message: 'Customer updated successfully',
       data: customer,
@@ -55,8 +59,8 @@ export class CustomerController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number) {
-    await this.customerService.delete(Number(id));
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    await this.customerService.delete(id);
     return {
       message: 'Customer deleted successfully',
     };

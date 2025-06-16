@@ -21,4 +21,11 @@ export class ReadingService {
   async delete(id: number) {
     return this.prisma.reading.delete({ where: { id } });
   }
+
+  async findByHardware(id_hardware: number) {
+    return this.prisma.reading.findMany({
+      where: { id_hardware },
+      orderBy: { start_time: 'desc' },
+    });
+  }
 }
