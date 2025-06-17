@@ -10,6 +10,7 @@ import {
 } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CustomerDto, CustomerSchema } from './schemas/customer.schema';
+import { ParsedBody } from 'src/core/parse-body';
 
 @Controller('customers')
 export class CustomerController {
@@ -34,9 +35,7 @@ export class CustomerController {
   }
 
   @Post()
-  async create(@Body() body: CustomerDto) {
-    const dto = CustomerSchema.parse(body);
-
+  async create(@ParsedBody(CustomerSchema) dto: CustomerDto) {
     const customer = await this.customerService.create(dto);
     return {
       message: 'Customer created successfully',
@@ -47,10 +46,8 @@ export class CustomerController {
   @Put(':id')
   async update(
     @Param('id', ParseIntPipe) id: number,
-    @Body() body: CustomerDto,
+    @ParsedBody(CustomerSchema) dto: CustomerDto,
   ) {
-    const dto = CustomerSchema.parse(body);
-
     const customer = await this.customerService.update(id, dto);
     return {
       message: 'Customer updated successfully',

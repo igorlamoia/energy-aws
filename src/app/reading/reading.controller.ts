@@ -13,15 +13,14 @@ import {
 } from './schemas/reading.schema';
 import { Prisma } from '@prisma/client';
 import { IResponse } from 'src/core/response.interface';
+import { ParsedBody } from 'src/core/parse-body';
 
 @Controller('readings')
 export class ReadingController {
   constructor(private readonly readingService: ReadingService) {}
 
   @Post()
-  async create(@Body() body: CreateReadingDto) {
-    const dto = CreateReadingSchema.parse(body);
-
+  async create(@ParsedBody(CreateReadingSchema) dto: CreateReadingDto) {
     return this.readingService.create(dto);
   }
 
