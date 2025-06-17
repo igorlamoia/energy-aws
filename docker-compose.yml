@@ -1,24 +1,24 @@
 version: '3.8'
 
 services:
-  app:
-    build: .
-    container_name: nestjs_app
-    ports:
-      - "3001:3000"
-    environment:
-      - DB_HOST=mysql
-      - DB_PORT=3306
-      - DB_USER=root
-      - DB_PASSWORD=0998
-      - DB_NAME=white_tariff_api
-    depends_on:
-      - mysql
-    volumes:
-      - .:/usr/src/app
-      - ./.env:/usr/src/app/.env
-      - /usr/src/app/node_modules
-    command: npm run start:dev
+  # app:
+  #   build: .
+  #   container_name: nestjs_app
+  #   ports:
+  #     - "3001:3000"
+  #   environment:
+  #     - DB_HOST=mysql
+  #     - DB_PORT=3306
+  #     - DB_USER=root
+  #     - DB_PASSWORD=0998
+  #     - DB_NAME=white_tariff_api
+  #   depends_on:
+  #     - mysql
+  #   volumes:
+  #     - .:/usr/src/app
+  #     - ./.env:/usr/src/app/.env
+  #     - /usr/src/app/node_modules
+  #   command: npm run start:dev
 
   mysql:
     image: mysql:latest
