@@ -5,9 +5,16 @@ import { ReadingModule } from './reading/reading.module';
 import { CoreModule } from 'src/core/core.module';
 import { CustomerModule } from './customer/customer.module';
 import { HardwareModule } from './hardware/hardware.module';
+import { UtilityCompanyModule } from './utility-company/utility-company.module';
 
 @Module({
-  imports: [CoreModule, ReadingModule, CustomerModule, HardwareModule],
+  imports: [
+    CoreModule,
+    ReadingModule,
+    CustomerModule,
+    HardwareModule,
+    UtilityCompanyModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
