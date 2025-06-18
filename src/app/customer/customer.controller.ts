@@ -12,10 +12,14 @@ import {
 import { CustomerService } from './customer.service';
 import { CustomerDto, CustomerSchema } from './schemas/customer.schema';
 import { ParsedBody } from 'src/core/parse-body';
+import { JwtService } from '@nestjs/jwt';
 
 @Controller('customers')
 export class CustomerController {
-  constructor(private readonly customerService: CustomerService) {}
+  constructor(
+    private readonly customerService: CustomerService,
+    private jwt: JwtService,
+  ) {}
 
   @Get()
   async findAll() {
@@ -32,6 +36,7 @@ export class CustomerController {
     return {
       message: 'Customer fetched successfully',
       data: customer,
+      token: this.jwt.sign({ id: customer.id }),
     };
   }
 
