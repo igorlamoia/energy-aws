@@ -6,6 +6,7 @@ import { CoreModule } from 'src/core/core.module';
 import { CustomerModule } from './customer/customer.module';
 import { HardwareModule } from './hardware/hardware.module';
 import { UtilityCompanyModule } from './utility-company/utility-company.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -14,6 +15,7 @@ import { UtilityCompanyModule } from './utility-company/utility-company.module';
     CustomerModule,
     HardwareModule,
     UtilityCompanyModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],

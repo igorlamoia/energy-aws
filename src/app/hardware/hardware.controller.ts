@@ -6,6 +6,7 @@ import {
   Delete,
   ParseIntPipe,
   Put,
+  HttpCode,
 } from '@nestjs/common';
 import { HardwareService } from './hardware.service';
 import { ParsedBody } from 'src/core/parse-body';
@@ -16,6 +17,7 @@ export class HardwareController {
   constructor(private readonly hardwareService: HardwareService) {}
 
   @Post()
+  @HttpCode(201)
   create(@ParsedBody(HardwareSchema) dto: HardwareDto) {
     return this.hardwareService.create(dto);
   }

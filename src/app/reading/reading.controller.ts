@@ -5,6 +5,7 @@ import {
   Get,
   Param,
   ParseIntPipe,
+  HttpCode,
 } from '@nestjs/common';
 import { ReadingService } from './reading.service';
 import {
@@ -20,6 +21,7 @@ export class ReadingController {
   constructor(private readonly readingService: ReadingService) {}
 
   @Post()
+  @HttpCode(201)
   async create(@ParsedBody(CreateReadingSchema) dto: CreateReadingDto) {
     return this.readingService.create(dto);
   }

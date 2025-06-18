@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  HttpCode,
   Param,
   ParseIntPipe,
   Post,
@@ -35,6 +36,7 @@ export class CustomerController {
   }
 
   @Post()
+  @HttpCode(201)
   async create(@ParsedBody(CustomerSchema) dto: CustomerDto) {
     const customer = await this.customerService.create(dto);
     return {
