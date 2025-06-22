@@ -37,7 +37,10 @@ export class ReadingController {
     @Param('id_hardware', ParseIntPipe) id_hardware: number,
     @Query() query: Record<string, any>,
   ) {
-    const readings = await this.readingService.findByHardware(id_hardware, query);
+    const readings = await this.readingService.findByHardware(
+      id_hardware,
+      query,
+    );
     return {
       message: 'Readings fetched successfully',
       ...readings,
@@ -45,10 +48,13 @@ export class ReadingController {
   }
 
   @Get()
-  async findAll(): Promise<IResponse<Prisma.ReadingUncheckedCreateInput[]>> {
+  async findAll(
+    @Query() query: Record<string, any>,
+  ): Promise<IResponse<Prisma.ReadingUncheckedCreateInput[]>> {
+    const readings = await this.readingService.findAll(query)
     return {
       message: 'Readings fetched successfully',
-      data: await this.readingService.findAll(),
+      ...readings
     };
   }
 }
