@@ -11,6 +11,7 @@ export interface IErrorResponse {
 }
 
 export interface ITime<T> {
+  length: number; // number of items in the data
   duration: number; // in seconds
   data: T;
   humanized: string; // human-readable duration

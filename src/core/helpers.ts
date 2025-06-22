@@ -18,6 +18,7 @@ export async function executeWithTiming<T>(
   return {
     duration: +durationSeconds.toFixed(3),
     humanized: humanizedDuration,
+    length: Array.isArray(data) ? data.length : (!data ? 0 : 1) ,
     data,
   };
 }
