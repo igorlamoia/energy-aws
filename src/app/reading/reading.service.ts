@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { executeWithTiming } from 'src/core/helpers';
+import { ITime } from 'src/core/response.interface';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
 
 @Injectable()
@@ -22,10 +24,26 @@ export class ReadingService {
     return this.prisma.reading.delete({ where: { id } });
   }
 
-  async findByHardware(id_hardware: number) {
-    return this.prisma.reading.findMany({
-      where: { id_hardware },
-      orderBy: { start_time: 'desc' },
-    });
+  async findByHardware(id_hardware: number, query: Record<string, any>) : Promise<ITime<Prisma.ReadingUncheckedCreateInput[]>> {
+    const { min_energy, max_energy, start_time, end_time } = query;
+
+    return executeWithTiming(() =>
+      this.prisma.reading.findMany({
+        where: {
+          id_hardware,
+          energy_consumed: {
+            gte: min_energy ? Number(min_energy) : undefined,
+            lte: max_energy ? Number(max_energy) : undefined,
+          },
+          start_time: {
+            gte: start_time ? new Date(start_time) : undefined,
+          },
+          end_time: {
+            lte: end_time ? new Date(end_time) : undefined,
+          },
+        },
+        orderBy: { start_time: 'desc' },
+      })
+    );
   }
 }

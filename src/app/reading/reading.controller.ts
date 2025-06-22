@@ -6,6 +6,7 @@ import {
   Param,
   ParseIntPipe,
   HttpCode,
+  Query,
 } from '@nestjs/common';
 import { ReadingService } from './reading.service';
 import {
@@ -34,11 +35,12 @@ export class ReadingController {
   @Get('hardware/:id_hardware')
   async findByHardware(
     @Param('id_hardware', ParseIntPipe) id_hardware: number,
+    @Query() query: Record<string, any>,
   ) {
-    const readings = await this.readingService.findByHardware(id_hardware);
+    const readings = await this.readingService.findByHardware(id_hardware, query);
     return {
       message: 'Readings fetched successfully',
-      data: readings,
+      ...readings,
     };
   }
 
