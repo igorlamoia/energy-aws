@@ -8,7 +8,7 @@ export class ReadingService {
   constructor(private prisma: PrismaService) {}
 
   async create(data: Prisma.ReadingUncheckedCreateInput) {
-    return this.prisma.reading.create({ data });
+    return executeWithTiming(() => this.prisma.reading.create({ data }));
   }
 
   async findAll(query: Record<string, any>) {
@@ -30,7 +30,7 @@ export class ReadingService {
   }
 
   async findOne(id: number) {
-    return this.prisma.reading.findUnique({ where: { id } });
+    return executeWithTiming(() => this.prisma.reading.findUnique({ where: { id } }));
   }
 
   async delete(id: number) {

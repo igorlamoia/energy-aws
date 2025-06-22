@@ -25,12 +25,18 @@ export class ReadingController {
   @Post()
   @HttpCode(201)
   async create(@ParsedBody(CreateReadingSchema) dto: CreateReadingDto) {
-    return this.readingService.create(dto);
+    return {
+      message: 'Reading created successfully',
+      ...await this.readingService.create(dto),
+    };
   }
 
   @Get(':id')
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    return this.readingService.findOne(id);
+  async findOne(@Param('id', ParseIntPipe) id: number) {
+    return {
+      message: 'Reading fetched successfully',
+      ...await this.readingService.findOne(id),
+    }
   }
 
   @Get('hardware/:id_hardware')
@@ -79,11 +85,17 @@ export class ReadingController {
     @Param('id', ParseIntPipe) id: number,
     @ParsedBody(CreateReadingSchema) dto: CreateReadingDto,
   ) {
-    return this.readingService.update(id, dto);
+    return {
+      message: 'Reading updated successfully',
+      ... await this.readingService.update(id, dto)
+    }
   }
 
   @Delete(':id')
   async delete(@Param('id', ParseIntPipe) id: number) {
-    return this.readingService.delete(id);
+    return {
+      message: 'Reading deleted successfully',
+      ... await this.readingService.delete(id)
+    };
   }
 }
