@@ -34,7 +34,9 @@ export class ReadingService {
   }
 
   async delete(id: number) {
-    return this.prisma.reading.delete({ where: { id } });
+    return await executeWithTiming(() =>
+      this.prisma.reading.delete({ where: { id } })
+    )
   }
 
   async findByHardware(id_hardware: number, query: Record<string, any>) {
@@ -57,6 +59,42 @@ export class ReadingService {
       consume,
       data,
     };
+  }
+
+  async findByUtilityCompany(id_utility_company: number, query: Record<string, any>) {
+    const { data, ...rest } = await executeWithTiming(() =>
+      this.prisma.reading.findMany({
+        where: {
+          Hardware: {
+            Residence: {
+              id_utility_company,
+            }
+          },
+          ...this.buildWhereClause(query),
+        },
+        orderBy: { id: query.order_by },
+      }),
+    );
+
+    const consume = data.reduce(
+      (acc, reading) => acc + reading.energy_consumed,
+      0,
+    );
+
+    return {
+      ...rest,
+      consume,
+      data,
+    };
+  }
+
+  async update(id: number, data: Prisma.ReadingUncheckedCreateInput) {
+    return  executeWithTiming(() =>
+      this.prisma.reading.update({
+        where: { id },
+        data,
+      })
+    )
   }
 
   private buildWhereClause(query: Record<string, any>) {

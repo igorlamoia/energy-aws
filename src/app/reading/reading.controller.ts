@@ -1,12 +1,13 @@
 import {
   Controller,
   Post,
-  Body,
   Get,
   Param,
   ParseIntPipe,
   HttpCode,
   Query,
+  Put,
+  Delete,
 } from '@nestjs/common';
 import { ReadingService } from './reading.service';
 import {
@@ -47,6 +48,21 @@ export class ReadingController {
     };
   }
 
+  @Get('utility-company/:id_utility_company')
+  async findByUtilityCompany(
+    @Param('id_utility_company', ParseIntPipe) id_utility_company: number,
+    @Query() query: Record<string, any>,
+  ) {
+  const readings = await this.readingService.findByUtilityCompany(
+      id_utility_company,
+      query,
+    );
+    return {
+      message: 'Readings fetched successfully',
+      ...readings,
+    };
+  }
+
   @Get()
   async findAll(
     @Query() query: Record<string, any>,
@@ -56,5 +72,18 @@ export class ReadingController {
       message: 'Readings fetched successfully',
       ...readings
     };
+  }
+
+  @Put(':id')
+  async update(
+    @Param('id', ParseIntPipe) id: number,
+    @ParsedBody(CreateReadingSchema) dto: CreateReadingDto,
+  ) {
+    return this.readingService.update(id, dto);
+  }
+
+  @Delete(':id')
+  async delete(@Param('id', ParseIntPipe) id: number) {
+    return this.readingService.delete(id);
   }
 }
