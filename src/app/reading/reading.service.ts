@@ -2,16 +2,30 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { executeWithTiming } from 'src/core/helpers';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
+import { ReadingDocument } from 'src/infra/mongo/models/reading.interface';
+import { Model } from 'mongoose';
+import { InjectModel } from '@nestjs/mongoose';
+
 
 @Injectable()
 export class ReadingService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @InjectModel('Reading') private readingModel: Model<ReadingDocument>,
+  ) {}
 
-  async create(data: Prisma.ReadingUncheckedCreateInput) {
-    return executeWithTiming(() => this.prisma.reading.create({ data }));
+  async create(data: Prisma.ReadingUncheckedCreateInput, dbType: 'sql' | 'nosql') {
+    if (dbType === 'sql')
+      return executeWithTiming(() => this.prisma.reading.create({ data }));
+    const reading = new this.readingModel(data);
+    return executeWithTiming(() => reading.save());
   }
 
-  async findAll(query: Record<string, any>) {
+  async findAll(query: Record<string, any>, dbType: 'sql' | 'nosql' = 'nosql'): Promise<any> {
+    if(dbType === 'nosql') {
+      console.log('in nosql');
+      return executeWithTiming(() => this.readingModel.find());
+    }
     const {data, ...rest} = await executeWithTiming(() => this.prisma.reading.findMany({
       where: this.buildWhereClause(query),
       orderBy: { id: query.order_by },

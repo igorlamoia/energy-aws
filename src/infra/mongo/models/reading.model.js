@@ -11,4 +11,5 @@ const ReadingSchema = new mongoose.Schema({
   end_time: { type: Date, index: true }
 });
 
+
 export default mongoose.model("Reading", ReadingSchema);

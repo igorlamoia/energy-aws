@@ -27,7 +27,7 @@ export class ReadingController {
   async create(@ParsedBody(CreateReadingSchema) dto: CreateReadingDto) {
     return {
       message: 'Reading created successfully',
-      ...await this.readingService.create(dto),
+      ...await this.readingService.create(dto, 'nosql'),
     };
   }
 
