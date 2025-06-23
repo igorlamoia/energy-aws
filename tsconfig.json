@@ -20,5 +20,9 @@
     "noFallthroughCasesInSwitch": false,
     "moduleResolution": "node",
     "types": ["node"],
+    "allowJs": true
   },
+  "include": [
+    "src/infra/mongo/**/*",
+  ],
 }
