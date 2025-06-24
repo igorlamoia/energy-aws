@@ -2,16 +2,16 @@ import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
 import { executeWithTiming } from 'src/core/helpers';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
-import { ReadingDocument } from 'src/infra/mongo/models/reading.interface';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
+import { Reading, ReadingDocument } from 'src/infra/mongo/schemas';
 
 
 @Injectable()
 export class ReadingService {
   constructor(
     private prisma: PrismaService,
-    @InjectModel('Reading') private readingModel: Model<ReadingDocument>,
+    @InjectModel(Reading.name) private readonly readingModel: Model<ReadingDocument>,
   ) {}
 
   async create(data: Prisma.ReadingUncheckedCreateInput, dbType: 'sql' | 'nosql') {

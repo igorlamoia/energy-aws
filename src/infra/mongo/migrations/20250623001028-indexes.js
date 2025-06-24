@@ -22,7 +22,7 @@ export async function up(db) {
       { key: { request_timestamp: 1 } }
     ]);
 
-    await db.collection("utilitycompanies").createIndexes([
+    await db.collection("utility_companies").createIndexes([
         { key: { id: 1 }, unique: true },
         { key: { name: 1 } }
       ]);

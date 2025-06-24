@@ -1,13 +1,24 @@
-import { Injectable } from '@nestjs/common';
+
+import {  Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
 import { Prisma } from '@prisma/client';
+import { Model } from 'mongoose';
+import { Customer, CustomerDocument } from 'src/infra/mongo/schemas';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
 
 @Injectable()
 export class CustomerService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private prisma: PrismaService,
+    @InjectModel(Customer.name)
+    private readonly customerModel: Model<CustomerDocument>) {}
 
-  async findAll() {
-    return await this.prisma.customer.findMany();
+  async findAll(db: 'sql' | 'nosql' = 'sql') {
+    if(db === 'sql')
+      return await this.prisma.customer.findMany();
+    // For NoSQL, you would typically use a different service or model.
+    // Assuming you have a NoSQL model set up, you would return that here.
+    // For example:
+    return await this.customerModel.find();
   }
 
   async findOne(id: number) {

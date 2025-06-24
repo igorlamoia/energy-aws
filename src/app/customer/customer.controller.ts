@@ -8,6 +8,7 @@ import {
   ParseIntPipe,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { CustomerService } from './customer.service';
 import { CustomerDto, CustomerSchema } from './schemas/customer.schema';
@@ -22,10 +23,12 @@ export class CustomerController {
   ) {}
 
   @Get()
-  async findAll() {
+  async findAll(
+    @Query() query: Record<string, any>,
+  ) {
     return {
       message: 'Customers fetched successfully',
-      data: await this.customerService.findAll(),
+      data: await this.customerService.findAll(query.db),
     };
   }
 
