@@ -14,8 +14,6 @@ import {
   CreateReadingSchema,
   CreateReadingDto,
 } from './schemas/reading.schema';
-import { Prisma } from '@prisma/client';
-import { IResponse } from 'src/core/response.interface';
 import { ParsedBody } from 'src/core/parse-body';
 
 @Controller('readings')
@@ -24,29 +22,30 @@ export class ReadingController {
 
   @Post()
   @HttpCode(201)
-  async create(@ParsedBody(CreateReadingSchema) dto: CreateReadingDto) {
+  async create(@ParsedBody(CreateReadingSchema) dto: CreateReadingDto, @Query() query: Record<string, any>) {
     return {
       message: 'Reading created successfully',
-      ...await this.readingService.create(dto, 'nosql'),
+      ...await this.readingService.create(dto, query.db),
     };
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
+  async findOne(@Param('id') id: number, @Query() query: Record<string, any>) {
     return {
       message: 'Reading fetched successfully',
-      ...await this.readingService.findOne(id),
+      ...await this.readingService.findOne(id, query.db),
     }
   }
 
   @Get('hardware/:id_hardware')
   async findByHardware(
-    @Param('id_hardware', ParseIntPipe) id_hardware: number,
+    @Param('id_hardware') id_hardware: number,
     @Query() query: Record<string, any>,
   ) {
     const readings = await this.readingService.findByHardware(
       id_hardware,
       query,
+      query.db
     );
     return {
       message: 'Readings fetched successfully',
@@ -56,12 +55,13 @@ export class ReadingController {
 
   @Get('utility-company/:id_utility_company')
   async findByUtilityCompany(
-    @Param('id_utility_company', ParseIntPipe) id_utility_company: number,
+    @Param('id_utility_company') id_utility_company: number,
     @Query() query: Record<string, any>,
   ) {
   const readings = await this.readingService.findByUtilityCompany(
       id_utility_company,
       query,
+      query.db
     );
     return {
       message: 'Readings fetched successfully',
@@ -72,8 +72,8 @@ export class ReadingController {
   @Get()
   async findAll(
     @Query() query: Record<string, any>,
-  ): Promise<IResponse<Prisma.ReadingUncheckedCreateInput[]>> {
-    const readings = await this.readingService.findAll(query)
+  ) {
+    const readings = await this.readingService.findAll(query, query.db)
     return {
       message: 'Readings fetched successfully',
       ...readings
@@ -82,20 +82,21 @@ export class ReadingController {
 
   @Put(':id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: number,
     @ParsedBody(CreateReadingSchema) dto: CreateReadingDto,
+    @Query() query: Record<string, any>
   ) {
     return {
       message: 'Reading updated successfully',
-      ... await this.readingService.update(id, dto)
+      ... await this.readingService.update(id, dto, query.db)
     }
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseIntPipe) id: number) {
+  async delete(@Param('id') id: number, @Query() query: Record<string, any>) {
     return {
       message: 'Reading deleted successfully',
-      ... await this.readingService.delete(id)
+      ... await this.readingService.delete(id, query.db)
     };
   }
 }

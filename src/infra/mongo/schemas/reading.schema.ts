@@ -6,13 +6,13 @@ export type ReadingDocument = Reading & Document;
 @Schema({ collection: 'readings' })
 export class Reading {
   @Prop({ type: String, index: true })
-  hardware_id!: string;
+  id_hardware!: string;
 
   @Prop({ type: String, index: true })
-  residence_id!: string;
+  id_residence!: string;
 
   @Prop({ type: String, index: true })
-  customer_id!: string;
+  id_customer!: string;
 
   @Prop()
   energy_consumed!: number;
