@@ -11,7 +11,7 @@ export async function statesSQLFactory(
 }
 
 export const getIdsStates = () => STATES.map((state) => state.id);
-const STATES = [
+export const STATES = [
   { id: 11, name: 'Rondônia', abbreviation: 'RO' },
   { id: 12, name: 'Acre', abbreviation: 'AC' },
   { id: 13, name: 'Amazonas', abbreviation: 'AM' },

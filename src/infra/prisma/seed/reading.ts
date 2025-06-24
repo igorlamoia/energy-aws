@@ -8,13 +8,21 @@ const DAYS = 2 * 24 * 60 * 60; // 2 days in milliseconds
 const TOTAL = 10000; // Total readings to create
 
 export async function readingSQLFactory(prisma: PrismaClient) {
-  const readings: Prisma.ReadingUncheckedCreateInput[] = [];
-  const refDate = new Date(Date.now() - DAYS); // Reference date for past readings
+  const readings = generateReadings(TOTAL); // Generate readings data
+  console.time('Insert Readings'); // Start timing
+  await prisma.reading.createMany({ data: readings });
+  console.log('\n✅ readings created: ' + readings.length);
+  console.timeEnd('Insert Readings'); // End timing and log the duration
+}
 
-  for (let i = 0; i < TOTAL; i++) {
+export const generateReadings = (total = TOTAL, days = DAYS, interval = INTERVAL) => {
+  const readings: Prisma.ReadingUncheckedCreateInput[] = [];
+  const refDate = new Date(Date.now() - days); // Reference date for past readings
+
+  for (let i = 0; i < total; i++) {
     const id_hardware = faker.helpers.arrayElement(possibleIds); // Shuffle hardware IDs
-    const start_time = new Date(refDate.getTime() + i * INTERVAL); // 3s interval
-    const end_time = new Date(start_time.getTime() + INTERVAL);
+    const start_time = new Date(refDate.getTime() + i * interval); // 3s interval
+    const end_time = new Date(start_time.getTime() + interval);
 
     readings.push({
       id_hardware,
@@ -25,9 +33,5 @@ export async function readingSQLFactory(prisma: PrismaClient) {
       end_time,
     });
   }
-
-  console.time('Insert Readings'); // Start timing
-  await prisma.reading.createMany({ data: readings });
-  console.log('\n✅ readings created: ' + readings.length);
-  console.timeEnd('Insert Readings'); // End timing and log the duration
+  return readings;
 }

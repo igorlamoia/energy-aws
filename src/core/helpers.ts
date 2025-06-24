@@ -1,7 +1,7 @@
 import { performance } from 'perf_hooks';
 import { ITime } from './response.interface';
 
-export async function executeWithTiming<T>(
+export async function debug<T>(
   queryFn: () => Promise<T>
 ): Promise<ITime<T>> {
   const startTime = performance.now(); // Start timing

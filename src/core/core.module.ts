@@ -4,6 +4,7 @@ import { ConfigModule } from '@nestjs/config';
 import { EnvService } from './env.service';
 import { envSchema } from './env.validation';
 import { AuthModule } from 'src/app/auth/auth.module';
+import { MongoModule } from 'src/infra/mongo/mongo.module';
 
 @Global()
 @Module({
@@ -14,6 +15,7 @@ import { AuthModule } from 'src/app/auth/auth.module';
       isGlobal: true,
     }),
     AuthModule,
+    MongoModule
   ],
   exports: [PrismaModule],
   providers: [EnvService],

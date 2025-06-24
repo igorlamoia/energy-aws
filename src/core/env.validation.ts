@@ -12,6 +12,9 @@ export const envSchema = z.object({
   }),
   PRIVATE_KEY: z.string(),
   PUBLIC_KEY: z.string(),
+  DATABASE_URL_MONGO: z.string().url({
+    message: 'DATABASE_URL_MONGO must be a valid URL',
+  }),
 });
 
 export type Env = z.infer<typeof envSchema>;

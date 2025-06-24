@@ -22,7 +22,12 @@
     "prisma:g": "prisma generate --schema=src/infra/prisma/schema.prisma",
     "prisma:s": "prisma studio --schema=src/infra/prisma/schema.prisma",
     "prisma:reset": "prisma migrate reset --force --schema=src/infra/prisma/schema.prisma",
-    "seed": "ts-node src/infra/prisma/seed/index.ts"
+    "seed:sql": "ts-node src/infra/prisma/seed/index.ts",
+    "seed:nosql": "ts-node src/infra/mongo/seed/index.ts",
+    "mongo:create": "npx migrate-mongo create -f src/infra/mongo/migrate-mongo-config.js",
+    "mongo:up": "npx migrate-mongo up -f src/infra/mongo/migrate-mongo-config.js",
+    "mongo:down": "npx migrate-mongo down -f src/infra/mongo/migrate-mongo-config.js",
+    "mongo:status": "npx migrate-mongo status -f src/infra/mongo/migrate-mongo-config.js"
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
@@ -30,10 +35,12 @@
     "@nestjs/core": "^11.0.1",
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mapped-types": "*",
+    "@nestjs/mongoose": "^11.0.3",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@prisma/client": "^6.9.0",
     "dotenv": "^16.5.0",
+    "mongoose": "^8.16.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "zod": "^3.25.64"
@@ -56,6 +63,7 @@
     "eslint-plugin-prettier": "^5.2.2",
     "globals": "^16.0.0",
     "jest": "^29.7.0",
+    "migrate-mongo": "^12.1.3",
     "prettier": "^3.4.2",
     "prisma": "^6.9.0",
     "source-map-support": "^0.5.21",
