@@ -23,6 +23,7 @@
     "prisma:s": "prisma studio --schema=src/infra/prisma/schema.prisma",
     "prisma:reset": "prisma migrate reset --force --schema=src/infra/prisma/schema.prisma",
     "seed:sql": "ts-node src/infra/prisma/seed/index.ts",
+    "seed:nosql": "ts-node src/infra/mongo/seed/index.ts",
     "mongo:create": "npx migrate-mongo create -f src/infra/mongo/migrate-mongo-config.js",
     "mongo:up": "npx migrate-mongo up -f src/infra/mongo/migrate-mongo-config.js",
     "mongo:down": "npx migrate-mongo down -f src/infra/mongo/migrate-mongo-config.js",

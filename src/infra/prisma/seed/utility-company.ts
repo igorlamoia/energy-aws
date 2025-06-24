@@ -2,13 +2,13 @@ import { PrismaClient } from '@prisma/client';
 
 export async function utilityCompanySQLFactory(prisma: PrismaClient) {
   console.time('Insert Utility Companies'); // Start timing
-  await prisma.utilityCompany.createMany({data: companies})
-  console.log('\n✅ utility companies created: ' + companies.length);
+  await prisma.utilityCompany.createMany({data: SEED_COMPANIES})
+  console.log('\n✅ utility companies created: ' + SEED_COMPANIES.length);
   console.timeEnd('Insert Utility Companies'); // End timing and log the duration
 }
 
 const hour = 60 * 60 * 1000; // 1 hour in milliseconds
-const companies = [
+export const SEED_COMPANIES = [
   {
     id: 1,
     name: 'Energisa S.A. MG',
