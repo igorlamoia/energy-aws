@@ -39,7 +39,7 @@ export class Residence {
   id_utility_company!: number;
 
   @Prop({ type: [HardwareSchema], default: [] })
-  hardware!: Hardware[];
+  hardware!: Hardware;
 }
 
 export const ResidenceSchema = SchemaFactory.createForClass(Residence);

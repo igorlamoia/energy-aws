@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { executeWithTiming } from 'src/core/helpers';
+import { debug } from 'src/core/helpers';
 import { PrismaService } from 'src/infra/prisma/prisma.service';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
@@ -16,17 +16,17 @@ export class ReadingService {
 
   async create(data: Prisma.ReadingUncheckedCreateInput, dbType: 'sql' | 'nosql') {
     if (dbType === 'sql')
-      return executeWithTiming(() => this.prisma.reading.create({ data }));
+      return debug(() => this.prisma.reading.create({ data }));
     const reading = new this.readingModel(data);
-    return executeWithTiming(() => reading.save());
+    return debug(() => reading.save());
   }
 
   async findAll(query: Record<string, any>, dbType: 'sql' | 'nosql' = 'nosql'): Promise<any> {
     if(dbType === 'nosql') {
       console.log('in nosql');
-      return executeWithTiming(() => this.readingModel.find());
+      return debug(() => this.readingModel.find());
     }
-    const {data, ...rest} = await executeWithTiming(() => this.prisma.reading.findMany({
+    const {data, ...rest} = await debug(() => this.prisma.reading.findMany({
       where: this.buildWhereClause(query),
       orderBy: { id: query.order_by },
     }));
@@ -44,17 +44,17 @@ export class ReadingService {
   }
 
   async findOne(id: number) {
-    return executeWithTiming(() => this.prisma.reading.findUnique({ where: { id } }));
+    return debug(() => this.prisma.reading.findUnique({ where: { id } }));
   }
 
   async delete(id: number) {
-    return await executeWithTiming(() =>
+    return await debug(() =>
       this.prisma.reading.delete({ where: { id } })
     )
   }
 
   async findByHardware(id_hardware: number, query: Record<string, any>) {
-    const { data, ...rest } = await executeWithTiming(() =>
+    const { data, ...rest } = await debug(() =>
       this.prisma.reading.findMany({
         where: {
           id_hardware,
@@ -76,7 +76,7 @@ export class ReadingService {
   }
 
   async findByUtilityCompany(id_utility_company: number, query: Record<string, any>) {
-    const { data, ...rest } = await executeWithTiming(() =>
+    const { data, ...rest } = await debug(() =>
       this.prisma.reading.findMany({
         where: {
           Hardware: {
@@ -103,7 +103,7 @@ export class ReadingService {
   }
 
   async update(id: number, data: Prisma.ReadingUncheckedCreateInput) {
-    return  executeWithTiming(() =>
+    return  debug(() =>
       this.prisma.reading.update({
         where: { id },
         data,

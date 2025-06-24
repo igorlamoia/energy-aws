@@ -21,6 +21,7 @@ import {
       imports: [ConfigModule],
       useFactory: (configService: ConfigService) => ({
         uri: configService.get<string>('DATABASE_URL_MONGO'),
+        dbName: 'white_tariff'
       }),
       inject: [ConfigService],
     }),

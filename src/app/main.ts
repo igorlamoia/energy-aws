@@ -13,7 +13,6 @@ async function bootstrap() {
   await app.listen(port, () => {
     console.log(`🚀 Application is running on: http://localhost:${port}`);
     console.log(`Environment: ${envService.get('NODE_ENV')}`);
-    console.log(`Database URL: ${envService.get('DATABASE_URL')}`);
   });
 }
 bootstrap();

@@ -5,7 +5,7 @@ dotenv.config();
 const config = {
     mongodb: {
         url: process.env.DATABASE_URL_MONGO,
-        databaseName: "white_tariff_api",
+        databaseName: "white_tariff",
         options: {
             useNewUrlParser: true, // removes a deprecation warning when connecting
             useUnifiedTopology: true, // removes a deprecating warning when connecting

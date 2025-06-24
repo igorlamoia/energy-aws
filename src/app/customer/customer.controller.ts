@@ -33,41 +33,41 @@ export class CustomerController {
   }
 
   @Get(':id')
-  async findOne(@Param('id', ParseIntPipe) id: number) {
-    const customer = await this.customerService.findOne(id);
+  async findOne(@Param('id') id: number, @Query() query: Record<string, any>) {
+    const customer = await this.customerService.findOne(id, query.db);
 
     return {
       message: 'Customer fetched successfully',
-      data: customer,
-      token: this.jwt.sign({ id: customer.id }),
+      ...customer,
     };
   }
 
   @Post()
   @HttpCode(201)
-  async create(@ParsedBody(CustomerSchema) dto: CustomerDto) {
-    const customer = await this.customerService.create(dto);
+  async create(@ParsedBody(CustomerSchema) dto: CustomerDto, @Query() query: Record<string, any>) {
+    const customer = await this.customerService.create(dto, query.db);
     return {
       message: 'Customer created successfully',
-      data: customer,
+      ...customer,
     };
   }
 
   @Put(':id')
   async update(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id') id: number,
     @ParsedBody(CustomerSchema) dto: CustomerDto,
+    @Query() query: Record<string, any>
   ) {
-    const customer = await this.customerService.update(id, dto);
+    const customer = await this.customerService.update(id, dto, query.db);
     return {
       message: 'Customer updated successfully',
-      data: customer,
+      ...customer,
     };
   }
 
   @Delete(':id')
-  async delete(@Param('id', ParseIntPipe) id: number) {
-    await this.customerService.delete(id);
+  async delete(@Param('id') id: number, @Query() query: Record<string, any>) {
+    await this.customerService.delete(id, query.db);
     return {
       message: 'Customer deleted successfully',
     };
