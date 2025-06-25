@@ -27,7 +27,7 @@ export class ReadingService {
     if (dbType === 'sql') {
       const { data, ...rest } = await debug(() =>
         this.prisma.reading.findMany({
-          where: this.buildWhereClause(query),
+          where: this.buildPrismaWhereClause(query),
           orderBy: { id: query.order_by },
         }),
       );
@@ -45,7 +45,7 @@ export class ReadingService {
     }
 
     const readings = await debug(() =>
-      this.readingModel.find().exec(),
+      this.readingModel.find(this.buildMongoWhereClause(query)).exec(),
     );
     const consume = readings.data.reduce(
       (acc, reading) => acc + reading.energy_consumed,
@@ -83,7 +83,7 @@ export class ReadingService {
         this.prisma.reading.findMany({
           where: {
             id_hardware: +id_hardware,
-            ...this.buildWhereClause(query),
+            ...this.buildPrismaWhereClause(query),
           },
           orderBy: { id: query.order_by },
         }),
@@ -100,17 +100,23 @@ export class ReadingService {
       };
     }
 
-    const readings = await debug(() =>
-      this.readingModel.find({ id_hardware }).exec(),
-    );
+    const {data, ...rest} = await debug(() => this.readingModel.aggregate([
+      { $match: {
+        id_hardware: +id_hardware
+      } }, // Filter by id_hardware
+      {
+        $group: {
+          _id: null, // Group all matching documents together
+          total_energy: { $sum: '$energy_consumed' }, // Sum the energy_consumed field
+        },
+      },
+    ]));
 
-    const consume = readings.data.reduce(
-      (acc, reading) => acc + reading.energy_consumed,
-      0,
-    );
+    const consume = data[0].total_energy || 0;
+
     return {
-      consume,
-      ...readings,
+      ...rest,
+      data: consume
     };
   }
 
@@ -128,7 +134,7 @@ export class ReadingService {
                 id_utility_company: +id_utility_company,
               },
             },
-            ...this.buildWhereClause(query),
+            ...this.buildPrismaWhereClause(query),
           },
           orderBy: { id: query.order_by },
         }),
@@ -179,7 +185,7 @@ export class ReadingService {
     return debug(() => reading.save());
   }
 
-  private buildWhereClause(query: Record<string, any>) {
+  private buildPrismaWhereClause(query: Record<string, any>) {
     const where: Prisma.ReadingWhereInput = {};
     where.energy_consumed = {};
     where.start_time = {};
@@ -188,6 +194,28 @@ export class ReadingService {
     if (query.max_energy) where.energy_consumed.lte = Number(query.max_energy);
     if (query.start_time) where.start_time.gte = new Date(query.start_time);
     if (query.end_time) where.end_time.lte = new Date(query.end_time);
+    if (query.id_hardware) where.id_hardware = Number(query.id_hardware);
+
+    return where;
+  }
+
+  private buildMongoWhereClause(query: Record<string, any>) {
+    const where: Record<string, any> = {};
+
+    if (query.min_energy || query.max_energy) {
+      where.energy_consumed = {};
+      if (query.min_energy) where.energy_consumed.$gte = Number(query.min_energy);
+      if (query.max_energy) where.energy_consumed.$lte = Number(query.max_energy);
+    }
+
+    if (query.start_time || query.end_time) {
+      where.start_time = {};
+      if (query.start_time) where.start_time.$gte = new Date(query.start_time);
+      if (query.end_time) where.start_time.$lte = new Date(query.end_time);
+    }
+
+    if(query.id_hardware) where.id_hardware = Number(query.id_hardware);
+
 
     return where;
   }

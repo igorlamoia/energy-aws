@@ -1,6 +1,7 @@
 import { Global, Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import mongoose from 'mongoose';
 import {
   Customer,
   CustomerSchema,
@@ -19,10 +20,14 @@ import {
   imports: [
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
-      useFactory: (configService: ConfigService) => ({
-        uri: configService.get<string>('DATABASE_URL_MONGO'),
-        dbName: 'white_tariff'
-      }),
+      useFactory: (configService: ConfigService) => {
+        mongoose.set('debug', true);
+        return {
+          uri: configService.get<string>('DATABASE_URL_MONGO'),
+          dbName: 'white_tariff',
+
+        }
+      },
       inject: [ConfigService],
     }),
     MongooseModule.forFeature([

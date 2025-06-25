@@ -5,14 +5,8 @@ export type ReadingDocument = Reading & Document;
 
 @Schema({ collection: 'readings' })
 export class Reading {
-  @Prop({ type: String, index: true })
-  id_hardware!: string;
-
-  @Prop({ type: String, index: true })
-  id_residence!: string;
-
-  @Prop({ type: String, index: true })
-  id_customer!: string;
+  @Prop({ type: Number , index: true })
+  id_hardware!: number;
 
   @Prop()
   energy_consumed!: number;
@@ -23,11 +17,12 @@ export class Reading {
   @Prop()
   voltage_value!: number;
 
-  @Prop({ type: Date, index: true })
+  @Prop({ type: Date })
   start_time!: Date;
 
-  @Prop({ type: Date, index: true })
+  @Prop({ type: Date })
   end_time!: Date;
 }
 
 export const ReadingSchema = SchemaFactory.createForClass(Reading);
+ReadingSchema.index({ id_hardware: 1, start_time: -1, end_time: -1 });
