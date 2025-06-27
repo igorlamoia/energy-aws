@@ -1,5 +1,5 @@
 import { performance } from 'perf_hooks';
-import { ITime } from './response.interface';
+import { ITime } from './interfaces';
 
 export async function debug<T>(
   queryFn: () => Promise<T>

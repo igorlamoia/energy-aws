@@ -8,6 +8,8 @@
 ## Description
 Given my use case:
 
+
+
 ## Project setup
 
 ```bash
@@ -26,19 +28,9 @@ $ npm run start:dev
 # production mode
 $ npm run start:prod
 ```
+## API Swagger Documentation
+To create a NestJS application that serves as a RESTful API for managing a collection of books, including features for adding, retrieving, updating, and deleting books: http://localhost:3000/api
 
-## Run tests
-
-```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
-```
 
 ## License
 

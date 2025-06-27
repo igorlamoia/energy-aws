@@ -2,6 +2,9 @@ import { z } from 'zod';
 // import { zodToOpenAPI } from '@anatine/zod-openapi';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { createZodDto } from '@anatine/zod-nestjs';
+import { ApiPropertyOptional, ApiResponse } from '@nestjs/swagger';
+import { DbType } from 'src/core/interfaces';
+import { QueryParams } from 'src/core/schema';
 
 
 extendZodWithOpenApi(z);
@@ -35,6 +38,9 @@ export const CreateReadingZodSchema = z.object({
   id_hardware: z.number().int().positive(),
 });
 
+export class ReadingQueryParams extends QueryParams{
+}
+
 
 // pass individualis:
 // .openapi({
@@ -42,7 +48,22 @@ export const CreateReadingZodSchema = z.object({
 //   description: 'ID of the hardware associated with the reading',
 //   example: 1,
 // })
-
+// 👇 Reusable ApiResponse decorator
+// export const CreateReadingResponse = ApiResponse({
+//   status: 201,
+//   description: 'Reading created successfully',
+//   schema: {
+//     example: {
+//       message: 'Reading created successfully',
+//       energy_consumed: 120,
+//       current_value: 10,
+//       voltage_value: 220,
+//       start_time: '2025-06-26T12:00:00Z',
+//       end_time: '2025-06-26T12:03:00Z',
+//       id_hardware: 1,
+//     },
+//   },
+// });
 export class CreateReadingSchema extends createZodDto(CreateReadingZodSchema) {}
 export type CreateReadingDto = z.infer<typeof CreateReadingZodSchema>;
 

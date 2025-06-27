@@ -5,8 +5,8 @@ import { PrismaService } from 'src/infra/prisma/prisma.service';
 import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Reading, ReadingDocument } from 'src/infra/mongo/schemas';
+import { DbType } from 'src/core/interfaces';
 
-type DbType = 'sql' | 'nosql';
 
 @Injectable()
 export class ReadingService {
@@ -16,7 +16,7 @@ export class ReadingService {
     private readonly readingModel: Model<ReadingDocument>,
   ) {}
 
-  async create(data: Prisma.ReadingUncheckedCreateInput, dbType: DbType) {
+  async create(data: Prisma.ReadingUncheckedCreateInput, dbType?: string) {
     if (dbType === 'sql')
       return debug(() => this.prisma.reading.create({ data }));
     const reading = new this.readingModel(data);

@@ -16,3 +16,5 @@ export interface ITime<T> {
   data: T;
   humanized: string; // human-readable duration
 }
+
+export type DbType = 'sql' | 'nosql' | undefined;
