@@ -4,6 +4,7 @@ import { ITime } from './response.interface';
 export async function debug<T>(
   queryFn: () => Promise<T>
 ): Promise<ITime<T>> {
+  // TODO add env to remove debug in production
   const startTime = performance.now(); // Start timing
   const data = await queryFn(); // Execute the query
   const endTime = performance.now(); // End timing

@@ -1,5 +1,6 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
+import { SwaggerModule, DocumentBuilder } from '@nestjs/swagger';
 import { GlobalExceptionFilter } from 'src/core/handle-errors';
 
 import { EnvService } from 'src/core/env.service';
@@ -9,6 +10,16 @@ async function bootstrap() {
   const envService = app.get(EnvService);
   const port = envService.get('PORT');
   app.useGlobalFilters(new GlobalExceptionFilter());
+
+  const config = new DocumentBuilder()
+  .setTitle('White Tariff Performance API')
+  .setDescription('Query and manage readings for the White Tariff Performance project.')
+  .setVersion('1.0')
+  .build();
+
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+  const documentFactory = () => SwaggerModule.createDocument(app, config);
+  SwaggerModule.setup('api', app, documentFactory);
 
   await app.listen(port, () => {
     console.log(`🚀 Application is running on: http://localhost:${port}`);

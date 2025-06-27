@@ -102,7 +102,7 @@ export class ReadingService {
 
     const {data, ...rest} = await debug(() => this.readingModel.aggregate([
       { $match: {
-        id_hardware: +id_hardware
+        ...this.buildMongoWhereClause(query), // Build the where clause based on query parameters
       } }, // Filter by id_hardware
       {
         $group: {
@@ -116,7 +116,9 @@ export class ReadingService {
 
     return {
       ...rest,
-      data: consume
+      data: {
+        consume
+      }
     };
   }
 

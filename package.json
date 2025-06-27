@@ -30,6 +30,7 @@
     "mongo:status": "npx migrate-mongo status -f src/infra/mongo/migrate-mongo-config.js"
   },
   "dependencies": {
+    "@anatine/zod-nestjs": "^2.0.12",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -38,9 +39,11 @@
     "@nestjs/mongoose": "^11.0.3",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
+    "@nestjs/swagger": "^11.2.0",
     "@prisma/client": "^6.9.0",
     "dotenv": "^16.5.0",
     "mongoose": "^8.16.0",
+    "openapi3-ts": "^4.5.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "zod": "^3.25.64"
