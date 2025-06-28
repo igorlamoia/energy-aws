@@ -11,6 +11,11 @@
     "sourceMap": true,
     "outDir": "./dist",
     "baseUrl": "./",
+    "paths": {
+      "src/*": [
+        "src/*"
+      ]
+    },
     "incremental": true,
     "skipLibCheck": true,
     "strict": true,
@@ -20,11 +25,19 @@
     "strictBindCallApply": false,
     "noFallthroughCasesInSwitch": false,
     "moduleResolution": "node",
-    "types": ["node"],
+    "types": [
+      "node"
+    ],
     "allowJs": true
   },
   "include": [
     "src/infra/mongo/**/*",
     "src/**/*.ts",
   ],
+  "ts-node": {
+    "compilerOptions": {
+      "moduleResolution": "node",
+      "baseUrl": "./"
+    }
+  }
 }

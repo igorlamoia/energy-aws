@@ -3,7 +3,7 @@ import { Document } from 'mongoose';
 
 export type UtilityCompanyDocument = UtilityCompany & Document;
 
-@Schema({ timestamps: true, collection: 'utility_companies' })
+@Schema({ timestamps: true, collection: 'utility_company' })
 export class UtilityCompany {
   @Prop({ type: Number, unique: true, index: true })
   id!: number;

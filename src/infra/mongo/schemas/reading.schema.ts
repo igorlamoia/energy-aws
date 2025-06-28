@@ -22,7 +22,15 @@ export class Reading {
 
   @Prop({ type: Date })
   end_time!: Date;
+
+  @Prop({ type: Number, index: true })
+  id_utility_company!: number;
+
+  @Prop({ type: Number, index: true })
+  id_state!: number;
 }
 
 export const ReadingSchema = SchemaFactory.createForClass(Reading);
 ReadingSchema.index({ id_hardware: 1, start_time: -1, end_time: -1 });
+ReadingSchema.index({ id_utility_company: 1 });
+ReadingSchema.index({ id_state: 1 });

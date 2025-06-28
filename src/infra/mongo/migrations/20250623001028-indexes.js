@@ -22,7 +22,7 @@ export async function up(db) {
       { key: { request_timestamp: 1 } }
     ]);
 
-    await db.collection("utility_companies").createIndexes([
+    await db.collection("utility_company").createIndexes([
         { key: { id: 1 }, unique: true },
         { key: { name: 1 } }
       ]);
@@ -32,6 +32,6 @@ export async function up(db) {
     await db.collection("readings").dropIndexes();
     await db.collection("customers").dropIndexes();
     await db.collection("logs").dropIndexes();
-    await db.collection("utility_companies").dropIndexes();
+    await db.collection("utility_company").dropIndexes();
 
   }

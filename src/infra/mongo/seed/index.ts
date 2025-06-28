@@ -1,10 +1,5 @@
 import { MongoClient } from 'mongodb';
-import { SEED_CUSTOMERS } from '../../prisma/seed/customer';
-import { SEED_COMPANIES } from '../../prisma/seed/utility-company';
-import { RESIDENCES_SEED } from '../../prisma/seed/residence';
-import { SEED_HARDWARES } from '../../prisma/seed/hardware';
-import { generateReadings } from '../../prisma/seed/reading';
-import { STATES } from '../../prisma/seed/states';
+import { generateCustomers, generateHardwares, generateReadings, generateResidences, SEED_COMPANIES, STATES } from '../../seed';
 
 const MONGO_URI =
   process.env.DATABASE_URL_MONGO || 'mongodb://localhost:27017/white_tariff';
@@ -24,14 +19,17 @@ async function seedUtilityCompanies(db: any) {
 }
 
 async function seedCustomers(db: any) {
-  const noSqlCustomers = SEED_CUSTOMERS.map((customer, index) => ({
+  const customers = generateCustomers();
+  const residences = generateResidences();
+  const hardwares = generateHardwares();
+  const noSqlCustomers = customers.map((customer, index) => ({
     ...customer,
     residences: ({
-      ...RESIDENCES_SEED[index],
-      state: STATES.find((state) => state.id === RESIDENCES_SEED[index].id_state),
+      ...residences[index],
+      state: STATES.find((state) => state.id === residences[index].id_state),
       id_customer: undefined,
       hardware: {
-        ...SEED_HARDWARES[index],
+        ...hardwares[index],
         id_residence: undefined,
       }, // Assuming hardware is seeded separately and linked by index
     })
@@ -43,12 +41,11 @@ async function seedCustomers(db: any) {
 }
 
 async function seedReadings(db: any) {
-  const readings = generateReadings();
-  // id_customer, id_residence
-  console.time('Insert readings'); // Start timing
+  const readings = generateReadings(); // Generate readings data
+  console.time('Insert Readings'); // Start timing
   await db.collection('readings').insertMany(readings);
   console.log('\n✅ readings created: ' + readings.length);
-  console.timeEnd('Insert readings'); // End timing and log the duration
+  console.timeEnd('Insert Readings'); // End timing and log the duration
 }
 
 async function main() {
@@ -57,13 +54,13 @@ async function main() {
   try {
     await client.connect();
     const db = client.db('white_tariff');
-
-    console.log('Connected to MongoDB!');
-
+    console.log('Starting MongoDB Seeding...\n');
+    console.time('MongoDB Seeding'); // Start timing the entire seeding process
     await seedStates(db);
     await seedUtilityCompanies(db);
     await seedCustomers(db);
     await seedReadings(db);
+    console.timeEnd('MongoDB Seeding'); // End timing the entire seeding process
 
     console.log('\n\nMongoDB Seeding completed! 🎉');
   } catch (error) {
