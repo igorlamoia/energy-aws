@@ -6,8 +6,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Reading, ReadingDocument } from 'src/infra/mongo/schemas';
 import { DbType } from 'src/core/interfaces';
-import { ReadingQueryParams } from './schemas/reading.schema';
-
+import { CreateReadingDto, ReadingQueryParams } from './schemas/reading.schema';
 
 @Injectable()
 export class ReadingService {
@@ -17,50 +16,66 @@ export class ReadingService {
     private readonly readingModel: Model<ReadingDocument>,
   ) {}
 
-  async create(data: Prisma.ReadingUncheckedCreateInput, dbType?: string) {
-    if (dbType === 'sql')
-      return debug(() => this.prisma.reading.create({ data }));
+  async create(data: CreateReadingDto, dbType?: string) {
+    if (dbType === 'sql') {
+      const sqlData = data as Prisma.ReadingUncheckedCreateInput ;
+      return debug(() => this.prisma.reading.create({ data: sqlData }));
+    }
     const reading = new this.readingModel(data);
     return debug(() => reading.save());
   }
 
+  async findAll(query: ReadingQueryParams) {
+    if (query.db === 'sql') return this.findAllSql(query);
+    return this.findAllNoSql(query);
+  }
 
-
-  async findAll(query: Record<string, any>, dbType: DbType) {
-    if (dbType === 'sql') {
-      const { data, ...rest } = await debug(() =>
-        this.prisma.reading.findMany({
-          where: this.buildPrismaWhereClause(query),
-          orderBy: { id: query.order_by },
-        }),
-      );
-
-      const consume = data.reduce(
-        (acc, reading) => acc + reading.energy_consumed,
-        0,
-      );
-
-      return {
-        ...rest,
-        consume,
-        // data,
-      };
-    }
-
-    const  { data, ...rest } = await debug(() =>
-      this.readingModel.find(this.buildMongoWhereClause(query)).exec(),
+  private async findAllSql(query: ReadingQueryParams) {
+    const { data, ...rest } = await debug(() =>
+      this.prisma.reading.aggregate({
+        _sum: { energy_consumed: true },
+        _count: true,
+        where: this.buildPrismaWhereClause(query),
+      }),
     );
-    const consume = data.reduce(
-      (acc, reading) => acc + reading.energy_consumed,
-      0,
-    );
+
     return {
       ...rest,
-      consume,
+      data: {
+        consume: data._sum?.energy_consumed || 0,
+        count: data._count || 0,
+      },
     };
   }
 
-  async findOne(id: number, dbType: DbType) {
+  private async findAllNoSql(query: ReadingQueryParams) {
+    const {data, ...rest} = await debug(() =>
+      this.readingModel
+        .aggregate([
+          { $match: this.buildMongoWhereClause(query) },
+          {
+            $group: {
+              _id: null,
+              sum: { $sum: '$energy_consumed' },
+              count: { $sum: 1 },
+            },
+          },
+        ])
+        .exec(),
+    );
+
+    const values = data[0] || { sum: 0, count: 0 };
+
+    return {
+      ...rest,
+      data: {
+        consume: values?.sum || 0,
+        count: values?.count || 0,
+      },
+    };
+  }
+
+  async findOne(id: string, dbType: DbType) {
     if (dbType === 'sql')
       return debug(() =>
         this.prisma.reading.findUnique({ where: { id: +id } }),
@@ -69,77 +84,27 @@ export class ReadingService {
     return debug(() => this.readingModel.findById(id).exec());
   }
 
-  async delete(id: number, dbType: DbType) {
+
+  async update(
+    id: string,
+    data: CreateReadingDto,
+    dbType: DbType,
+  ) {
+    if (dbType === 'sql') {
+      const sqlData = data as Prisma.ReadingUncheckedCreateInput ;
+      return debug(() => this.prisma.reading.update({ where: { id: +id }, data: sqlData }));
+    }
+
+    return debug(() => this.readingModel.findByIdAndUpdate(id, data, { new: true, runValidators: true }).exec());
+  }
+
+  async delete(id: string, dbType: DbType) {
     if (dbType === 'sql')
       return debug(() => this.prisma.reading.delete({ where: { id: +id } }));
 
     return debug(() => this.readingModel.findByIdAndDelete(id).exec());
   }
 
-  async findByUtilityCompany(
-    id_utility_company: number,
-    query: Record<string, any>,
-    dbType: DbType,
-  ) {
-    if (dbType === 'sql') {
-      const { data, ...rest } = await debug(() =>
-        this.prisma.reading.findMany({
-          where: {
-            Hardware: {
-              Residence: {
-                id_utility_company: +id_utility_company,
-              },
-            },
-            ...this.buildPrismaWhereClause(query),
-          },
-          orderBy: { id: query.order_by },
-        }),
-      );
-
-      const consume = data.reduce(
-        (acc, reading) => acc + reading.energy_consumed,
-        0,
-      );
-
-      return {
-        ...rest,
-        consume,
-        data,
-      };
-    }
-
-    const readings = await debug(() =>
-      this.readingModel
-        .find({ 'Hardware.Residence.id_utility_company': id_utility_company })
-        .exec(),
-    );
-    const consume = readings.data.reduce(
-      (acc, reading) => acc + reading.energy_consumed,
-      0,
-    );
-    return {
-      consume,
-      ...readings,
-    };
-  }
-
-  async update(
-    id: number,
-    data: Prisma.ReadingUncheckedCreateInput,
-    dbType: DbType,
-  ) {
-    if (dbType === 'sql')
-      return debug(() =>
-        this.prisma.reading.update({
-          where: { id: +id },
-          data,
-        }),
-      );
-
-    const reading = await this.readingModel.findById(id).orFail();
-    Object.assign(reading, data);
-    return debug(() => reading.save());
-  }
 
   private buildPrismaWhereClause(query: ReadingQueryParams) {
     const where: Prisma.ReadingWhereInput = {};
@@ -155,7 +120,9 @@ export class ReadingService {
       Residence: {
         ...(query.id_residence && { id: Number(query.id_residence) }),
         ...(query.id_state && { id_state: Number(query.id_state) }),
-        ...(query.id_utility_company && { id_utility_company: Number(query.id_utility_company) }),
+        ...(query.id_utility_company && {
+          id_utility_company: Number(query.id_utility_company),
+        }),
       },
     };
 
@@ -167,8 +134,10 @@ export class ReadingService {
 
     if (query.min_energy || query.max_energy) {
       where.energy_consumed = {};
-      if (query.min_energy) where.energy_consumed.$gte = Number(query.min_energy);
-      if (query.max_energy) where.energy_consumed.$lte = Number(query.max_energy);
+      if (query.min_energy)
+        where.energy_consumed.$gte = Number(query.min_energy);
+      if (query.max_energy)
+        where.energy_consumed.$lte = Number(query.max_energy);
     }
 
     if (query.start_time || query.end_time) {
@@ -177,20 +146,18 @@ export class ReadingService {
       if (query.end_time) where.start_time.$lte = new Date(query.end_time);
     }
 
-    if(query.id_residence) where.id_residence = Number(query.id_residence);
+    if (query.id_residence) where.id_residence = Number(query.id_residence);
     // 'Hardware.Residence.id_utility_company': id_utility_company
-    if (query.id_utility_company) where.id_utility_company = Number(query.id_utility_company);
+    if (query.id_utility_company)
+      where.id_utility_company = Number(query.id_utility_company);
     if (query.id_state) where.id_state = Number(query.id_state);
 
     // NOT IMPLEMENTED YET
     // if (query.id_hardware) where.id_hardware = Number(query.id_hardware);
 
-
-
     return where;
   }
 }
-
 
 // To calculate the total energy consumed across all readings, we can use an aggregation pipeline in MongoDB.
 // const {data, ...rest} = await debug(() => this.readingModel.aggregate([

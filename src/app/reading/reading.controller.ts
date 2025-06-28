@@ -12,8 +12,9 @@ import { ReadingService } from './reading.service';
 import {
   CreateReadingZodSchema,
   CreateReadingDto,
-  CreateReadingSchema,
   ReadingQueryParams,
+  CreateUpdateReading,
+  validateConditionalFields,
 } from './schemas/reading.schema';
 import { ParsedBody } from 'src/core/parse-body';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
@@ -29,15 +30,16 @@ export class ReadingController {
   ) {
     return {
       message: 'Readings fetched successfully',
-      ...await this.readingService.findAll(query, query.db)
+      ...await this.readingService.findAll(query)
     };
   }
 
   @Post()
   @HttpCode(201)
-  @ApiBody({type: CreateReadingSchema})
+  @ApiBody(CreateUpdateReading)
   @ApiResponse({ status: 201, description: 'Reading created successfully' })
   async create(@ParsedBody(CreateReadingZodSchema) dto: CreateReadingDto, @Query() query: BaseQueryParams) {
+    validateConditionalFields(dto, query.db);
     return {
       message: 'Reading created successfully',
       ...await this.readingService.create(dto, query.db),
@@ -45,7 +47,7 @@ export class ReadingController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number, @Query() query: BaseQueryParams) {
+  async findOne(@Param('id') id: string, @Query() query: BaseQueryParams) {
     return {
       message: 'Reading fetched successfully',
       ...await this.readingService.findOne(id, query.db),
@@ -53,11 +55,13 @@ export class ReadingController {
   }
 
   @Put(':id')
+  @ApiBody(CreateUpdateReading)
   async update(
-    @Param('id') id: number,
+    @Param('id') id: string,
     @ParsedBody(CreateReadingZodSchema) dto: CreateReadingDto,
-    @Query() query: Record<string, any>
+    @Query() query: BaseQueryParams
   ) {
+    validateConditionalFields(dto, query.db);
     return {
       message: 'Reading updated successfully',
       ... await this.readingService.update(id, dto, query.db)
@@ -65,7 +69,7 @@ export class ReadingController {
   }
 
   @Delete(':id')
-  async delete(@Param('id') id: number, @Query() query: Record<string, any>) {
+  async delete(@Param('id') id: string, @Query() query: BaseQueryParams) {
     return {
       message: 'Reading deleted successfully',
       ... await this.readingService.delete(id, query.db)
