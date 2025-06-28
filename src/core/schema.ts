@@ -1,6 +1,9 @@
 import { ApiPropertyOptional } from "@nestjs/swagger";
+import { DbType } from "./interfaces";
 
-export class QueryParams {
-  @ApiPropertyOptional({ description: 'Database to query', example: 'nosql' })
-  db?: 'sql' | 'nosql';
+export class BaseQueryParams {
+  @ApiPropertyOptional({ description: 'Database to query',
+    enum: ['nosql', 'sql'],
+    example: 'nosql' })
+  db?: DbType;
 }

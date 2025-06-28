@@ -17,13 +17,14 @@ async function bootstrap() {
   .setVersion('1.0')
   .build();
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+   
   const documentFactory = () => SwaggerModule.createDocument(app, config);
   SwaggerModule.setup('api', app, documentFactory);
 
   await app.listen(port, () => {
     console.log(`🚀 Application is running on: http://localhost:${port}`);
     console.log(`Environment: ${envService.get('NODE_ENV')}`);
+    console.log(`Documentation available at: http://localhost:${port}/api`);
   });
 }
 bootstrap();

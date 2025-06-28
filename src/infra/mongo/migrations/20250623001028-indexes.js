@@ -5,11 +5,9 @@
  */
 export async function up(db) {
     await db.collection("readings").createIndexes([
-      { key: { id_hardware: 1 } },
-      { key: { id_residence: 1 } },
-      { key: { id_customer: 1 } },
-      { key: { start_time: 1 } },
-      { key: { end_time: 1 } }
+      { key: { id_utility_company: 1, start_time: -1, end_time: -1  } },
+      { key: { id_state: 1, start_time: -1, end_time: -1  } },
+      { key: { id_residence: 1, start_time: -1, end_time: -1  } },
     ]);
 
     await db.collection("customers").createIndexes([
@@ -22,7 +20,7 @@ export async function up(db) {
       { key: { request_timestamp: 1 } }
     ]);
 
-    await db.collection("utility_companies").createIndexes([
+    await db.collection("utility_company").createIndexes([
         { key: { id: 1 }, unique: true },
         { key: { name: 1 } }
       ]);
@@ -32,6 +30,6 @@ export async function up(db) {
     await db.collection("readings").dropIndexes();
     await db.collection("customers").dropIndexes();
     await db.collection("logs").dropIndexes();
-    await db.collection("utility_companies").dropIndexes();
+    await db.collection("utility_company").dropIndexes();
 
   }

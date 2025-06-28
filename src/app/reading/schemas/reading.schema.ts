@@ -4,7 +4,7 @@ import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { createZodDto } from '@anatine/zod-nestjs';
 import { ApiPropertyOptional, ApiResponse } from '@nestjs/swagger';
 import { DbType } from 'src/core/interfaces';
-import { QueryParams } from 'src/core/schema';
+import { BaseQueryParams } from 'src/core/schema';
 
 
 extendZodWithOpenApi(z);
@@ -38,7 +38,29 @@ export const CreateReadingZodSchema = z.object({
   id_hardware: z.number().int().positive(),
 });
 
-export class ReadingQueryParams extends QueryParams{
+export class ReadingQueryParams extends BaseQueryParams {
+  @ApiPropertyOptional()
+  id_hardware?: number;
+  @ApiPropertyOptional()
+  id_residence?: number;
+  @ApiPropertyOptional()
+  id_utility_company?: number;
+  @ApiPropertyOptional()
+  id_state?: number;
+  @ApiPropertyOptional()
+  min_energy?: number;
+  @ApiPropertyOptional()
+  max_energy?: number;
+  @ApiPropertyOptional({
+    description: 'Start time for filtering readings',
+    example: '2025-01-01T12:00:00Z',
+  })
+  start_time?: string; // ISO 8601 format
+  @ApiPropertyOptional({
+    description: 'End time for filtering readings',
+    example: '2025-06-01T12:00:00Z',
+  })
+  end_time?: string; // ISO 8601 format
 }
 
 
