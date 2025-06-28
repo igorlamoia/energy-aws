@@ -1,9 +1,10 @@
 import { faker } from '@faker-js/faker/locale/pt_BR';
-import { Prisma } from '@prisma/client';
 import { generateCPF } from '../../utils/generator';
 
+const LENGTH = 200; // Default length for generating data
+const READINGS_LENGTH = 1000000; // Total readings to create
 
-export const generateCustomers = (length = 10) => Array.from({ length }, (_, index) => ({
+export const generateCustomers = (length = LENGTH) => Array.from({ length }, (_, index) => ({
   id: index + 1,
   name: faker.person.fullName(),
   cpf_cnpj: generateCPF(),
@@ -14,7 +15,7 @@ export const generateCustomers = (length = 10) => Array.from({ length }, (_, ind
 
 
 const possibleVersions = ['1.0.0', '1.1.0', '2.0.0'];
-export const generateHardwares = (length = 10) => Array.from({ length }, (_, index) => ({
+export const generateHardwares = (length = LENGTH) => Array.from({ length }, (_, index) => ({
   id: index + 1,
   firmware_version: faker.helpers.arrayElement(possibleVersions),
   hardware_version: faker.helpers.arrayElement(possibleVersions),
@@ -26,13 +27,12 @@ export const generateHardwares = (length = 10) => Array.from({ length }, (_, ind
 
 const INTERVAL = 3000; // 3 seconds in milliseconds
 const DAYS = 2 * 24 * 60 * 60; // 2 days in milliseconds
-const TOTAL = 10000; // Total readings to create
 export const generateReadings = (db: 'sql'|'nosql' = 'sql') => {
   const readings: any[]  = [];
   const refDate = new Date(Date.now() - DAYS); // Reference date for past readings
   const residences = generateResidences();
   const possibleIds = residences.map((residence) => residence.id);
-  for (let i = 0; i < TOTAL; i++) {
+  for (let i = 0; i < READINGS_LENGTH; i++) {
     const id_residence = faker.helpers.arrayElement(possibleIds); // Shuffle hardware IDs
     const start_time = new Date(refDate.getTime() + i * INTERVAL); // 3s INTERVAL
     const end_time = new Date(start_time.getTime() + INTERVAL);
@@ -58,13 +58,14 @@ export const generateReadings = (db: 'sql'|'nosql' = 'sql') => {
       });
     }
   }
+
   return readings;
 }
 
 
 const possibleStates = [31, 33, 35]; // MG, RJ, SP
 const possibleUtilityCompanies = [1, 3, 4]; // MG, RJ, SP
-export const generateResidences = (length = 10) => Array.from({ length }, (_, index) => ({
+export const generateResidences = (length = LENGTH) => Array.from({ length }, (_, index) => ({
   id: index + 1, // Assign id from 1 to 10
   city: faker.location.city(),
   id_state: faker.helpers.arrayElement(possibleStates),
