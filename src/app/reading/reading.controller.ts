@@ -3,7 +3,6 @@ import {
   Post,
   Get,
   Param,
-  ParseIntPipe,
   HttpCode,
   Query,
   Put,
@@ -11,10 +10,13 @@ import {
 } from '@nestjs/common';
 import { ReadingService } from './reading.service';
 import {
-  CreateReadingSchema,
+  CreateReadingZodSchema,
   CreateReadingDto,
+  CreateReadingSchema,
+  ReadingQueryParams,
 } from './schemas/reading.schema';
 import { ParsedBody } from 'src/core/parse-body';
+import { ApiBody, ApiResponse } from '@nestjs/swagger';
 
 @Controller('readings')
 export class ReadingController {
@@ -22,7 +24,9 @@ export class ReadingController {
 
   @Post()
   @HttpCode(201)
-  async create(@ParsedBody(CreateReadingSchema) dto: CreateReadingDto, @Query() query: Record<string, any>) {
+  @ApiBody({type: CreateReadingSchema})
+  @ApiResponse({ status: 201, description: 'Reading created successfully' })
+  async create(@ParsedBody(CreateReadingZodSchema) dto: CreateReadingDto, @Query() query: ReadingQueryParams) {
     return {
       message: 'Reading created successfully',
       ...await this.readingService.create(dto, query.db),
@@ -83,7 +87,7 @@ export class ReadingController {
   @Put(':id')
   async update(
     @Param('id') id: number,
-    @ParsedBody(CreateReadingSchema) dto: CreateReadingDto,
+    @ParsedBody(CreateReadingZodSchema) dto: CreateReadingDto,
     @Query() query: Record<string, any>
   ) {
     return {

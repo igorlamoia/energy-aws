@@ -1,36 +1,20 @@
-version: '3.8'
+version: '3.9'
 
 services:
-  # app:
-  #   build: .
-  #   container_name: nestjs_app
-  #   ports:
-  #     - "3001:3000"
-  #   environment:
-  #     - DB_HOST=mysql
-  #     - DB_PORT=3306
-  #     - DB_USER=root
-  #     - DB_PASSWORD=0998
-  #     - DB_NAME=white_tariff_api
-  #   depends_on:
-  #     - mysql
-  #   volumes:
-  #     - .:/usr/src/app
-  #     - ./.env:/usr/src/app/.env
-  #     - /usr/src/app/node_modules
-  #   command: npm run start:dev
-
   mysql:
-    image: mysql:latest
+    image: mysql:8.0
     container_name: mysql_db
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: 0998
+      MYSQL_ROOT_PASSWORD: rootpassword
       MYSQL_DATABASE: white_tariff
     ports:
       - "3306:3306"
     volumes:
       - mysql_data:/var/lib/mysql
+    networks:
+      - app_net
+
   nosql:
     image: mongo:latest
     container_name: mongo_db
@@ -39,7 +23,16 @@ services:
       - "27017:27017"
     volumes:
       - mongo_data:/data/db
+    # environment:
+    #   MONGO_INITDB_ROOT_USERNAME: root        # 👤 MongoDB root user
+    #   MONGO_INITDB_ROOT_PASSWORD: rootpass    # 🔐 MongoDB root password
+    networks:
+      - app_net
 
 volumes:
   mysql_data:
   mongo_data:
+
+networks:
+  app_net:
+    driver: bridge

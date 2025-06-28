@@ -2,6 +2,7 @@
   "compilerOptions": {
     "module": "commonjs",
     "declaration": true,
+    "strictPropertyInitialization": false, // Disable ts(2564)
     "removeComments": true,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,

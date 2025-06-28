@@ -7,8 +7,7 @@ import { generateReadings } from '../../prisma/seed/reading';
 import { STATES } from '../../prisma/seed/states';
 
 const MONGO_URI =
-  process.env.DATABASE_URL_MONGO ||
-  'mongodb://localhost:27017/white_tariff';
+  process.env.DATABASE_URL_MONGO || 'mongodb://localhost:27017/white_tariff';
 
 async function seedStates(db: any) {
   console.time('Insert States'); // Start timing
@@ -25,18 +24,18 @@ async function seedUtilityCompanies(db: any) {
 }
 
 async function seedCustomers(db: any) {
-  const noSqlCustomers = SEED_CUSTOMERS.map((customer) => ({
+  const noSqlCustomers = SEED_CUSTOMERS.map((customer, index) => ({
     ...customer,
-    residences: RESIDENCES_SEED.map((residence, index) => ({
-      ...residence,
-      state:
-        STATES.find((state) => state.id === residence.id_state)?.abbreviation ||
-        '',
-      customerId: undefined,
-      hardware: SEED_HARDWARES[index] || null, // Assuming hardware is seeded separately and linked by index
-    })), // Adding residences directly to the customer document
+    residences: ({
+      ...RESIDENCES_SEED[index],
+      state: STATES.find((state) => state.id === RESIDENCES_SEED[index].id_state),
+      id_customer: undefined,
+      hardware: {
+        ...SEED_HARDWARES[index],
+        id_residence: undefined,
+      }, // Assuming hardware is seeded separately and linked by index
+    })
   }));
-
   console.time('Insert customers'); // Start timing
   await db.collection('customers').insertMany(noSqlCustomers);
   console.log('\n✅ customers created: ' + noSqlCustomers.length);
@@ -44,11 +43,7 @@ async function seedCustomers(db: any) {
 }
 
 async function seedReadings(db: any) {
-  const readings = generateReadings().map((reading) => ({
-    ...reading,
-    id_customer: reading.id_hardware,
-    id_residence: reading.id_hardware, // Assuming id_hardware corresponds to id_customer and id_residence
-  }));
+  const readings = generateReadings();
   // id_customer, id_residence
   console.time('Insert readings'); // Start timing
   await db.collection('readings').insertMany(readings);
