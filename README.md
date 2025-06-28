@@ -16,6 +16,26 @@ Given my use case:
 $ npm install
 ```
 
+## Database setup
+### MySQL
+Migrate the database schema using Prisma:
+```bash
+$ npm run prisma:m
+```
+Seed the database with initial data:
+```bash
+$ npm run seed:sql
+```
+### MongoDB
+Migrate the database schema
+```bash
+$ npm run mongo:up
+```
+Seed the database with initial data:
+```bash
+$ npm run seed:nosql
+```
+
 ## Compile and run the project
 
 ```bash
@@ -31,6 +51,9 @@ $ npm run start:prod
 ## API Swagger Documentation
 To create a NestJS application that serves as a RESTful API for managing a collection of books, including features for adding, retrieving, updating, and deleting books: http://localhost:3000/api
 
+
+# Relational ERD
+<img src="./docs/prisma-erd.svg">
 
 ## License
 

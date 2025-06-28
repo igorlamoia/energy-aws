@@ -12,7 +12,7 @@ extendZodWithOpenApi(z);
 export const CreateReadingZodSchema = z.object({
   energy_consumed: z.number().int().nonnegative().openapi({
     title: 'Energy Consumed',
-    description: 'The amount of energy consumed in kWh',
+    description: 'The amount of energy consumed',
     example: 150,
   }),
   current_value: z.number().int().nonnegative().openapi({
