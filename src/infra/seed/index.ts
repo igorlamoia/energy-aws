@@ -3,7 +3,7 @@ import { Prisma } from '@prisma/client';
 import { generateCPF } from '../../utils/generator';
 
 
-export const generateCustomers = () => Array.from({ length: 10 }, (_, index) => ({
+export const generateCustomers = (length = 10) => Array.from({ length }, (_, index) => ({
   id: index + 1,
   name: faker.person.fullName(),
   cpf_cnpj: generateCPF(),
@@ -14,7 +14,7 @@ export const generateCustomers = () => Array.from({ length: 10 }, (_, index) => 
 
 
 const possibleVersions = ['1.0.0', '1.1.0', '2.0.0'];
-export const generateHardwares = () => Array.from({ length: 10 }, (_, index) => ({
+export const generateHardwares = (length = 10) => Array.from({ length }, (_, index) => ({
   id: index + 1,
   firmware_version: faker.helpers.arrayElement(possibleVersions),
   hardware_version: faker.helpers.arrayElement(possibleVersions),
@@ -24,27 +24,39 @@ export const generateHardwares = () => Array.from({ length: 10 }, (_, index) => 
 }));
 
 
-const possibleIds = Array.from({ length: 10 }, (_, index) => index + 1);
 const INTERVAL = 3000; // 3 seconds in milliseconds
 const DAYS = 2 * 24 * 60 * 60; // 2 days in milliseconds
 const TOTAL = 10000; // Total readings to create
-export const generateReadings = (total = TOTAL, days = DAYS, interval = INTERVAL) => {
-  const readings: Prisma.ReadingUncheckedCreateInput[] = [];
-  const refDate = new Date(Date.now() - days); // Reference date for past readings
-
-  for (let i = 0; i < total; i++) {
-    const id_hardware = faker.helpers.arrayElement(possibleIds); // Shuffle hardware IDs
-    const start_time = new Date(refDate.getTime() + i * interval); // 3s interval
-    const end_time = new Date(start_time.getTime() + interval);
-
+export const generateReadings = (db: 'sql'|'nosql' = 'sql') => {
+  const readings: any[]  = [];
+  const refDate = new Date(Date.now() - DAYS); // Reference date for past readings
+  const residences = generateResidences();
+  const possibleIds = residences.map((residence) => residence.id);
+  for (let i = 0; i < TOTAL; i++) {
+    const id_residence = faker.helpers.arrayElement(possibleIds); // Shuffle hardware IDs
+    const start_time = new Date(refDate.getTime() + i * INTERVAL); // 3s INTERVAL
+    const end_time = new Date(start_time.getTime() + INTERVAL);
+    if( db === 'nosql') {
     readings.push({
-      id_hardware,
-      energy_consumed: faker.number.int({ min: 0, max: 1000 }),
-      current_value: faker.number.int({ min: 0, max: 100 }),
-      voltage_value: faker.helpers.arrayElement([110, 220, 380]),
+      id_residence,
+      id_state: +residences[id_residence - 1].id_state, // Assuming state is linked to residence
+      id_utility_company: +residences[id_residence - 1].id_utility_company, // Assuming utility company is linked to residence
+      energy_consumed: +faker.number.int({ min: 0, max: 1000 }),
+      current_value: +faker.number.int({ min: 0, max: 100 }),
+      voltage_value: +faker.helpers.arrayElement([110, 220, 380]),
       start_time,
       end_time,
     });
+  } else {
+    readings.push({
+        id_hardware: id_residence,
+        energy_consumed: faker.number.int({ min: 0, max: 1000 }),
+        current_value: faker.number.int({ min: 0, max: 100 }),
+        voltage_value: faker.helpers.arrayElement([110, 220, 380]),
+        start_time,
+        end_time,
+      });
+    }
   }
   return readings;
 }
@@ -52,7 +64,7 @@ export const generateReadings = (total = TOTAL, days = DAYS, interval = INTERVAL
 
 const possibleStates = [31, 33, 35]; // MG, RJ, SP
 const possibleUtilityCompanies = [1, 3, 4]; // MG, RJ, SP
-export const generateResidences = () => Array.from({ length: 10 }, (_, index) => ({
+export const generateResidences = (length = 10) => Array.from({ length }, (_, index) => ({
   id: index + 1, // Assign id from 1 to 10
   city: faker.location.city(),
   id_state: faker.helpers.arrayElement(possibleStates),

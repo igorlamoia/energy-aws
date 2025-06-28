@@ -6,6 +6,7 @@ import { Model } from 'mongoose';
 import { InjectModel } from '@nestjs/mongoose';
 import { Reading, ReadingDocument } from 'src/infra/mongo/schemas';
 import { DbType } from 'src/core/interfaces';
+import { ReadingQueryParams } from './schemas/reading.schema';
 
 
 @Injectable()
@@ -22,6 +23,8 @@ export class ReadingService {
     const reading = new this.readingModel(data);
     return debug(() => reading.save());
   }
+
+
 
   async findAll(query: Record<string, any>, dbType: DbType) {
     if (dbType === 'sql') {
@@ -40,20 +43,20 @@ export class ReadingService {
       return {
         ...rest,
         consume,
-        data,
+        // data,
       };
     }
 
-    const readings = await debug(() =>
+    const  { data, ...rest } = await debug(() =>
       this.readingModel.find(this.buildMongoWhereClause(query)).exec(),
     );
-    const consume = readings.data.reduce(
+    const consume = data.reduce(
       (acc, reading) => acc + reading.energy_consumed,
       0,
     );
     return {
+      ...rest,
       consume,
-      ...readings,
     };
   }
 
@@ -71,55 +74,6 @@ export class ReadingService {
       return debug(() => this.prisma.reading.delete({ where: { id: +id } }));
 
     return debug(() => this.readingModel.findByIdAndDelete(id).exec());
-  }
-
-  async findByHardware(
-    id_hardware: number|string,
-    query: Record<string, any>,
-    dbType: DbType,
-  ) {
-    if (dbType === 'sql') {
-      const { data, ...rest } = await debug(() =>
-        this.prisma.reading.findMany({
-          where: {
-            id_hardware: +id_hardware,
-            ...this.buildPrismaWhereClause(query),
-          },
-          orderBy: { id: query.order_by },
-        }),
-      );
-      const consume = data.reduce(
-        (acc, reading) => acc + reading.energy_consumed,
-        0,
-      );
-
-      return {
-        ...rest,
-        consume,
-        data,
-      };
-    }
-
-    const {data, ...rest} = await debug(() => this.readingModel.aggregate([
-      { $match: {
-        ...this.buildMongoWhereClause(query), // Build the where clause based on query parameters
-      } }, // Filter by id_hardware
-      {
-        $group: {
-          _id: null, // Group all matching documents together
-          total_energy: { $sum: '$energy_consumed' }, // Sum the energy_consumed field
-        },
-      },
-    ]));
-
-    const consume = data[0].total_energy || 0;
-
-    return {
-      ...rest,
-      data: {
-        consume
-      }
-    };
   }
 
   async findByUtilityCompany(
@@ -187,7 +141,7 @@ export class ReadingService {
     return debug(() => reading.save());
   }
 
-  private buildPrismaWhereClause(query: Record<string, any>) {
+  private buildPrismaWhereClause(query: ReadingQueryParams) {
     const where: Prisma.ReadingWhereInput = {};
     where.energy_consumed = {};
     where.start_time = {};
@@ -197,11 +151,18 @@ export class ReadingService {
     if (query.start_time) where.start_time.gte = new Date(query.start_time);
     if (query.end_time) where.end_time.lte = new Date(query.end_time);
     if (query.id_hardware) where.id_hardware = Number(query.id_hardware);
+    where.Hardware = {
+      Residence: {
+        ...(query.id_residence && { id: Number(query.id_residence) }),
+        ...(query.id_state && { id_state: Number(query.id_state) }),
+        ...(query.id_utility_company && { id_utility_company: Number(query.id_utility_company) }),
+      },
+    };
 
     return where;
   }
 
-  private buildMongoWhereClause(query: Record<string, any>) {
+  private buildMongoWhereClause(query: ReadingQueryParams) {
     const where: Record<string, any> = {};
 
     if (query.min_energy || query.max_energy) {
@@ -216,9 +177,30 @@ export class ReadingService {
       if (query.end_time) where.start_time.$lte = new Date(query.end_time);
     }
 
-    if(query.id_hardware) where.id_hardware = Number(query.id_hardware);
+    if(query.id_residence) where.id_residence = Number(query.id_residence);
+    // 'Hardware.Residence.id_utility_company': id_utility_company
+    if (query.id_utility_company) where.id_utility_company = Number(query.id_utility_company);
+    if (query.id_state) where.id_state = Number(query.id_state);
+
+    // NOT IMPLEMENTED YET
+    // if (query.id_hardware) where.id_hardware = Number(query.id_hardware);
+
 
 
     return where;
   }
 }
+
+
+// To calculate the total energy consumed across all readings, we can use an aggregation pipeline in MongoDB.
+// const {data, ...rest} = await debug(() => this.readingModel.aggregate([
+//   { $match: {
+//     ...this.buildMongoWhereClause(query), // Build the where clause based on query parameters
+//   } }, // Filter by id_hardware
+//   {
+//     $group: {
+//       _id: null, // Group all matching documents together
+//       total_energy: { $sum: '$energy_consumed' }, // Sum the energy_consumed field
+//     },
+//   },
+// ]));

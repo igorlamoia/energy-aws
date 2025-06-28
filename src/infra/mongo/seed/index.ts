@@ -41,7 +41,7 @@ async function seedCustomers(db: any) {
 }
 
 async function seedReadings(db: any) {
-  const readings = generateReadings(); // Generate readings data
+  const readings = generateReadings('nosql'); // Generate readings data
   console.time('Insert Readings'); // Start timing
   await db.collection('readings').insertMany(readings);
   console.log('\n✅ readings created: ' + readings.length);

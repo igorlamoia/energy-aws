@@ -5,11 +5,9 @@
  */
 export async function up(db) {
     await db.collection("readings").createIndexes([
-      { key: { id_hardware: 1 } },
-      { key: { id_residence: 1 } },
-      { key: { id_customer: 1 } },
-      { key: { start_time: 1 } },
-      { key: { end_time: 1 } }
+      { key: { id_utility_company: 1, start_time: -1, end_time: -1  } },
+      { key: { id_state: 1, start_time: -1, end_time: -1  } },
+      { key: { id_residence: 1, start_time: -1, end_time: -1  } },
     ]);
 
     await db.collection("customers").createIndexes([

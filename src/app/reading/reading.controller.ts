@@ -17,6 +17,7 @@ import {
 } from './schemas/reading.schema';
 import { ParsedBody } from 'src/core/parse-body';
 import { ApiBody, ApiResponse } from '@nestjs/swagger';
+import { BaseQueryParams } from 'src/core/schema';
 
 @Controller('readings')
 export class ReadingController {
@@ -26,7 +27,7 @@ export class ReadingController {
   @HttpCode(201)
   @ApiBody({type: CreateReadingSchema})
   @ApiResponse({ status: 201, description: 'Reading created successfully' })
-  async create(@ParsedBody(CreateReadingZodSchema) dto: CreateReadingDto, @Query() query: ReadingQueryParams) {
+  async create(@ParsedBody(CreateReadingZodSchema) dto: CreateReadingDto, @Query() query: BaseQueryParams) {
     return {
       message: 'Reading created successfully',
       ...await this.readingService.create(dto, query.db),
@@ -34,54 +35,11 @@ export class ReadingController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number, @Query() query: Record<string, any>) {
+  async findOne(@Param('id') id: number, @Query() query: BaseQueryParams) {
     return {
       message: 'Reading fetched successfully',
       ...await this.readingService.findOne(id, query.db),
     }
-  }
-
-  @Get('hardware/:id_hardware')
-  async findByHardware(
-    @Param('id_hardware') id_hardware: number,
-    @Query() query: Record<string, any>,
-  ) {
-    const readings = await this.readingService.findByHardware(
-      id_hardware,
-      query,
-      query.db
-    );
-    return {
-      message: 'Readings fetched successfully',
-      ...readings,
-    };
-  }
-
-  @Get('utility-company/:id_utility_company')
-  async findByUtilityCompany(
-    @Param('id_utility_company') id_utility_company: number,
-    @Query() query: Record<string, any>,
-  ) {
-  const readings = await this.readingService.findByUtilityCompany(
-      id_utility_company,
-      query,
-      query.db
-    );
-    return {
-      message: 'Readings fetched successfully',
-      ...readings,
-    };
-  }
-
-  @Get()
-  async findAll(
-    @Query() query: Record<string, any>,
-  ) {
-    const readings = await this.readingService.findAll(query, query.db)
-    return {
-      message: 'Readings fetched successfully',
-      ...readings
-    };
   }
 
   @Put(':id')
@@ -101,6 +59,16 @@ export class ReadingController {
     return {
       message: 'Reading deleted successfully',
       ... await this.readingService.delete(id, query.db)
+    };
+  }
+
+  @Get()
+  async findAll(
+    @Query() query: ReadingQueryParams,
+  ) {
+    return {
+      message: 'Readings fetched successfully',
+      ...await this.readingService.findAll(query, query.db)
     };
   }
 }
