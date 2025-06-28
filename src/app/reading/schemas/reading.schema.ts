@@ -1,11 +1,8 @@
-import { z } from 'zod';
-// import { zodToOpenAPI } from '@anatine/zod-openapi';
+import { z, ZodError, ZodIssue } from 'zod';
 import { extendZodWithOpenApi } from '@anatine/zod-openapi';
 import { createZodDto } from '@anatine/zod-nestjs';
-import { ApiPropertyOptional, ApiResponse } from '@nestjs/swagger';
-import { DbType } from 'src/core/interfaces';
+import { ApiPropertyOptional } from '@nestjs/swagger';
 import { BaseQueryParams } from 'src/core/schema';
-
 
 extendZodWithOpenApi(z);
 
@@ -35,8 +32,13 @@ export const CreateReadingZodSchema = z.object({
     example: '2023-10-01T14:00:00Z',
   }),
   // .regex(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/, 'Invalid time'),
-  id_hardware: z.number().int().positive(),
+  id_hardware: z.number().int().positive().optional(),
+  id_residence: z.number().int().positive().optional(),
+  id_utility_company: z.number().int().positive().optional(),
+  id_state: z.number().int().positive().optional(),
 });
+
+
 
 export class ReadingQueryParams extends BaseQueryParams {
   @ApiPropertyOptional()
@@ -63,7 +65,6 @@ export class ReadingQueryParams extends BaseQueryParams {
   end_time?: string; // ISO 8601 format
 }
 
-
 // pass individualis:
 // .openapi({
 //   title: 'Hardware ID',
@@ -89,30 +90,66 @@ export class ReadingQueryParams extends BaseQueryParams {
 export class CreateReadingSchema extends createZodDto(CreateReadingZodSchema) {}
 export type CreateReadingDto = z.infer<typeof CreateReadingZodSchema>;
 
+export const CreateUpdateReading = {
+  type: CreateReadingSchema,
+  examples: {
+    SQL: {
+      summary: 'Create a SQL reading',
+      description: 'Create with hardware',
+      value: {
+        id_hardware: 1,
+        energy_consumed: 250,
+        current_value: 50,
+        voltage_value: 230,
+        start_time: '2025-10-01T12:00:00Z',
+        end_time: '2025-10-01T14:00:00Z',
+      },
+    },
+    NoSQL: {
+      summary: 'Create a NoSQL reading',
+      description: 'Create with id_residence, id_state, and id_utility_company',
+      value: {
+        id_residence: 8,
+        id_state: 33,
+        id_utility_company: 3,
+        energy_consumed: 735,
+        current_value: 21,
+        voltage_value: 110,
+        start_time: '2025-06-28T21:50:18.450Z',
+        end_time: '2025-06-28T21:50:21.450Z',
+      },
+    },
+  },
+};
 
-// const Api = {type: CreateReadingSchema , examples : {
-//   CreateReadingExample: {
-//     summary: 'Create a new reading',
-//     description: 'Create a new reading with the specified parameters.',
-//     value: {
-//       energy_consumed: 250,
-//       current_value: 50,
-//       voltage_value: 230,
-//       start_time: '2023-10-01T12:00:00Z',
-//       end_time: '2023-10-01T14:00:00Z',
-//       id_hardware: 1,
-//     },
-//   },
-//   CreatingOther: {
-//     summary: 'Create another reading',
-//     description: 'Create another reading with different parameters.',
-//     value: {
-//       energy_consumed: 300,
-//       current_value: 60,
-//       voltage_value: 240,
-//       start_time: '2023-10-01T13:00:00Z',
-//       end_time: '2023-10-01T15:00:00Z',
-//       id_hardware: 2,
-//     },
-//   }
-// }}
+
+export function validateConditionalFields(dto: CreateReadingDto, db?: string): void {
+  const issues: ZodIssue[] = [];
+
+  const requiredFieldsByDb: Record<string, { field: keyof CreateReadingDto; message: string }[]> = {
+    nosql: [
+      { field: 'id_residence', message: 'id_residence is required when db=nosql' },
+      { field: 'id_utility_company', message: 'id_utility_company is required when db=nosql' },
+      { field: 'id_state', message: 'id_state is required when db=nosql' },
+    ],
+    sql: [
+      { field: 'id_hardware', message: 'id_hardware is required when db=sql' },
+    ],
+  };
+
+  if (db && requiredFieldsByDb[db]) {
+    requiredFieldsByDb[db].forEach(({ field, message }) => {
+      if (dto[field] == null) {
+        issues.push({
+          path: [field],
+          message,
+          code: 'custom',
+        });
+      }
+    });
+  }
+
+  if (issues.length > 0)
+    throw new ZodError(issues);
+
+}
