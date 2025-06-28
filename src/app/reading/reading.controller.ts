@@ -23,6 +23,16 @@ import { BaseQueryParams } from 'src/core/schema';
 export class ReadingController {
   constructor(private readonly readingService: ReadingService) {}
 
+  @Get()
+  async findAll(
+    @Query() query: ReadingQueryParams,
+  ) {
+    return {
+      message: 'Readings fetched successfully',
+      ...await this.readingService.findAll(query, query.db)
+    };
+  }
+
   @Post()
   @HttpCode(201)
   @ApiBody({type: CreateReadingSchema})
@@ -59,16 +69,6 @@ export class ReadingController {
     return {
       message: 'Reading deleted successfully',
       ... await this.readingService.delete(id, query.db)
-    };
-  }
-
-  @Get()
-  async findAll(
-    @Query() query: ReadingQueryParams,
-  ) {
-    return {
-      message: 'Readings fetched successfully',
-      ...await this.readingService.findAll(query, query.db)
     };
   }
 }

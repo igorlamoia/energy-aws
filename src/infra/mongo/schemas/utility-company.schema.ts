@@ -6,13 +6,13 @@ export type UtilityCompanyDocument = UtilityCompany & Document;
 @Schema({ timestamps: true, collection: 'utility_company' })
 export class UtilityCompany {
   @Prop({ type: Number, unique: true, index: true })
-  id!: number;
+  id: number;
 
   @Prop({ required: true })
-  name!: string;
+  name: string;
 
   @Prop({ required: true })
-  standard_rate!: number;
+  standard_rate: number;
 
   @Prop()
   off_peak_rate?: number;

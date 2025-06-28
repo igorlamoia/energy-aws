@@ -7,22 +7,22 @@ export type CustomerDocument = Customer & Document;
 @Schema({ timestamps: true, collection: 'customers' })
 export class Customer {
   @Prop({ unique: true, index: true })
-  cpf_cnpj!: string;
+  cpf_cnpj: string;
 
   @Prop()
-  name!: string;
+  name: string;
 
   @Prop({ unique: true, sparse: true, index: true })
-  email!: string;
+  email: string;
 
   @Prop()
-  mobile_phone!: string;
+  mobile_phone: string;
 
   @Prop({ default: true })
-  is_active!: boolean;
+  is_active: boolean;
 
   @Prop({ type: [ResidenceSchema], default: [] })
-  residences!: Residence[];
+  residences: Residence[];
 }
 
 export const CustomerSchema = SchemaFactory.createForClass(Customer);
