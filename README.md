@@ -61,6 +61,10 @@ Migrate the database schema using Prisma:
 ```bash
 $ npm run prisma:m
 ```
+Generate Prisma client:
+```bash
+$ npm run prisma:g
+```
 Seed the database with initial data:
 ```bash
 $ npm run seed:sql

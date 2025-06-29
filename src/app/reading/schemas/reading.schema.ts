@@ -24,12 +24,12 @@ export const CreateReadingZodSchema = z.object({
   }),
   start_time: z.string().openapi({
     description: 'Start time of the reading in ISO 8601 format',
-    example: '2023-10-01T12:00:00Z',
+    example: '2025-06-29T12:00:00Z',
   }),
   // .regex(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/, 'Invalid time'),
   end_time: z.string().openapi({
     description: 'End time of the reading in ISO 8601 format',
-    example: '2023-10-01T14:00:00Z',
+    example: '2025-07-29T12:00:00Z',
   }),
   // .regex(/^([01]\d|2[0-3]):[0-5]\d:[0-5]\d$/, 'Invalid time'),
   id_hardware: z.number().int().positive().optional(),
@@ -55,38 +55,16 @@ export class ReadingQueryParams extends BaseQueryParams {
   max_energy?: number;
   @ApiPropertyOptional({
     description: 'Start time for filtering readings',
-    example: '2025-01-01T12:00:00Z',
+    example: '2025-06-29T12:00:00Z',
   })
   start_time?: string; // ISO 8601 format
   @ApiPropertyOptional({
     description: 'End time for filtering readings',
-    example: '2025-06-01T12:00:00Z',
+    example: '2025-07-29T12:00:00Z',
   })
   end_time?: string; // ISO 8601 format
 }
 
-// pass individualis:
-// .openapi({
-//   title: 'Hardware ID',
-//   description: 'ID of the hardware associated with the reading',
-//   example: 1,
-// })
-// 👇 Reusable ApiResponse decorator
-// export const CreateReadingResponse = ApiResponse({
-//   status: 201,
-//   description: 'Reading created successfully',
-//   schema: {
-//     example: {
-//       message: 'Reading created successfully',
-//       energy_consumed: 120,
-//       current_value: 10,
-//       voltage_value: 220,
-//       start_time: '2025-06-26T12:00:00Z',
-//       end_time: '2025-06-26T12:03:00Z',
-//       id_hardware: 1,
-//     },
-//   },
-// });
 export class CreateReadingSchema extends createZodDto(CreateReadingZodSchema) {}
 export type CreateReadingDto = z.infer<typeof CreateReadingZodSchema>;
 
@@ -101,8 +79,8 @@ export const CreateUpdateReading = {
         energy_consumed: 250,
         current_value: 50,
         voltage_value: 230,
-        start_time: '2025-10-01T12:00:00Z',
-        end_time: '2025-10-01T14:00:00Z',
+        start_time: '2025-06-29T12:00:00Z',
+        end_time: '2025-07-29T12:00:00Z',
       },
     },
     NoSQL: {
@@ -111,12 +89,12 @@ export const CreateUpdateReading = {
       value: {
         id_residence: 8,
         id_state: 33,
-        id_utility_company: 3,
+        id_utility_company: 4,
         energy_consumed: 735,
         current_value: 21,
         voltage_value: 110,
-        start_time: '2025-06-28T21:50:18.450Z',
-        end_time: '2025-06-28T21:50:21.450Z',
+        start_time: '2025-06-29T12:00:00Z',
+        end_time: '2025-07-29T12:00:00Z',
       },
     },
   },
