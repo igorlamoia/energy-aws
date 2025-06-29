@@ -11,9 +11,9 @@ Store the energy readings with intervals of 3 seconds. The application is built 
 Why? To compare performance and scalability of both databases in a real-world scenario.
 
 To compare I'm using two Ec2 intances:
-- **MySQL**: `t2.micro` (Ubunto:24) instance with 1 vCPU and 1 GiB of memory.
-- **MongoDB**: `t2.micro` (Ubunto:24)  instance with 1 vCPU and 1 GiB of memory.
-
+- **MySQL**: `t2.micro` (Ubunto:24) instance with 1 vCPU and 1 GiB of memory 8GB.
+- **MongoDB**: `t2.micro` (Ubunto:24)  instance with 1 vCPU and 1 GiB of memory 8GB.
+- **NestJS**: `t2.micro` (Ubunto:24) instance with 1 vCPU and 1 GiB of memory 16GB.
 
 [![NestJS](https://img.shields.io/badge/NestJS-4E89FF?logo=nestjs&logoColor=white)](https://nestjs.com/)
 [![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
