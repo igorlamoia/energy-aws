@@ -95,6 +95,7 @@ model Reading {
 
   Hardware Hardware @relation(fields: [id_hardware], references: [id])
 
+  @@index([start_time, end_time])
   @@map("reading")
 }
 

@@ -5,8 +5,47 @@
 [circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
 [circleci-url]: https://circleci.com/gh/nestjs/nest
 
-## Description
-Given my use case:
+# Project Energy (IoT)
+Store the energy readings with intervals of 3 seconds. The application is built with NestJS and uses both MySQL and MongoDB databases, with Prisma as the ORM for MySQL and Mongoose for MongoDB. The application provides a RESTful API for managing energy readings, including features for adding, retrieving, updating, and deleting readings.
+
+Why? To compare performance and scalability of both databases in a real-world scenario.
+
+To compare I'm using two Ec2 intances:
+- **MySQL**: `t2.micro` (Ubunto:24) instance with 1 vCPU and 1 GiB of memory.
+- **MongoDB**: `t2.micro` (Ubunto:24)  instance with 1 vCPU and 1 GiB of memory.
+
+
+[![NestJS](https://img.shields.io/badge/NestJS-4E89FF?logo=nestjs&logoColor=white)](https://nestjs.com/)
+[![MySQL](https://img.shields.io/badge/MySQL-4479A1?logo=mysql&logoColor=white)](https://www.mysql.com/)
+[![MongoDB](https://img.shields.io/badge/MongoDB-47A248?logo=mongodb&logoColor=white)](https://www.mongodb.com/)
+[![Prisma](https://img.shields.io/badge/Prisma-2D3748?logo=prisma&logoColor=white)](https://www.prisma.io/)
+[![Mongoose](https://img.shields.io/badge/Mongoose-880000?logo=mongoose&logoColor=white)](https://mongoosejs.com/)
+[![Aws](https://img.shields.io/badge/AWS-232F3E?logo=amazonaws&logoColor=white)](https://aws.amazon.com/)
+[![Ec2](https://img.shields.io/badge/AWS%20EC2-FF9900?logo=amazon-ec2&logoColor=white)](https://aws.amazon.com/ec2/)
+
+## Table of Contents
+- [Project setup](#project-setup)
+- [Database setup](#database-setup)
+  - [MySQL](#mysql)
+  - [MongoDB](#mongodb)
+- [Compile and run the project](#compile-and-run-the-project)
+- [API Swagger Documentation](#api-swagger-documentation)
+- [Relational ERD](#relational-erd)
+- [Performance Tests - Consumer Energy Readings](#performance-tests---consumer-energy-readings)
+  - [Total readings (1.000.000 registers)](#total-readings-1000000-registers)
+  - [Search in one month range](#search-in-one-month-range)
+  - [Search by residence 1 in one month range](#search-by-residence-1-in-one-month-range)
+  - [Search by state 33 (MG) in one month range](#search-by-state-33-mg-in-one-month-range)
+  - [Search by utility company 4 in one month range](#search-by-utility-company-4-in-one-month-range)
+  - [Creating a new reading](#creating-a-new-reading)
+  - [Updating a reading](#updating-a-reading)
+  - [Deleting a reading](#deleting-a-reading)
+- [License](#license)
+## Requirements
+- Node.js (v18 or later)
+
+# Energy Readings API
+This project is a NestJS application that serves as a RESTful API for managing energy readings. It supports both MySQL and MongoDB databases, allowing you to choose the database that best fits your needs.
 
 
 
@@ -54,6 +93,73 @@ To create a NestJS application that serves as a RESTful API for managing a colle
 
 # Relational ERD
 <img src="./docs/prisma-erd.svg">
+
+# Performance Tests - Consumer Energy Readings
+### Total readings (1.000.000 registers)
+NoSQL:
+- 620.524 ms
+- 600.568 ms
+
+SQL:
+- 2.7101 s
+- 2.4061 s
+
+### Search in one month range:
+NoSQL (863.163 registers):
+- 845.917 ms
+- 837.434 ms
+
+SQL (863.307 registers):
+- 1.5945 s
+- 1.2670 s
+
+### Search by residence 1 in one month range:
+NoSQL (4.330 registers):
+- 179.563 ms
+- 187.200 ms
+
+SQL (4.262 registers):
+- 328.213 ms
+- 171.104 ms
+
+### Search by state 33 (RJ) in one month range:
+NoSQL (337.069 registers):
+- 603.715 ms
+- 594.813 ms
+
+SQL (262.996):
+- 1.1459 s
+- 925.286 ms
+
+### Search by utility company 4 in one month range:
+NoSQL (284.537 registers):
+- 553.321 ms
+
+SQL (272.166):
+- 1.2236 s
+
+### Creating a new reading:
+NoSQL:
+- 152.882 ms
+
+SQL:
+- 602.308 ms
+
+### Updating a reading:
+NoSQL:
+- 171.722 ms
+
+SQL:
+- 1.2072 s
+
+### Deleting a reading:
+NoSQL:
+- 148.294 ms
+
+SQL:
+- 1.0485 s
+
+
 
 ## License
 

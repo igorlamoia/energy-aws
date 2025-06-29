@@ -1,8 +1,10 @@
 import { MongoClient } from 'mongodb';
 import { generateCustomers, generateHardwares, generateReadings, generateResidences, SEED_COMPANIES, STATES } from '../../seed';
+import * as dotenv from 'dotenv';
+dotenv.config();
 
 const MONGO_URI =
-  process.env.DATABASE_URL_MONGO || 'mongodb://localhost:27017/white_tariff';
+  process.env.DATABASE_URL_MONGO;
 
 async function seedStates(db: any) {
   console.time('Insert States'); // Start timing
@@ -49,7 +51,7 @@ async function seedReadings(db: any) {
 }
 
 async function main() {
-  const client = new MongoClient(MONGO_URI);
+  const client = new MongoClient(MONGO_URI!);
 
   try {
     await client.connect();
