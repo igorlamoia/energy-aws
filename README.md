@@ -35,7 +35,7 @@ To compare I'm using two Ec2 intances:
   - [Total readings (1.000.000 registers)](#total-readings-1000000-registers)
   - [Search in one month range](#search-in-one-month-range)
   - [Search by residence 1 in one month range](#search-by-residence-1-in-one-month-range)
-  - [Search by state 33 (MG) in one month range](#search-by-state-33-mg-in-one-month-range)
+  - [Search by state 33 (RJ) in one month range](#search-by-state-33-rj-in-one-month-range)
   - [Search by utility company 4 in one month range](#search-by-utility-company-4-in-one-month-range)
   - [Creating a new reading](#creating-a-new-reading)
   - [Updating a reading](#updating-a-reading)
