@@ -40,6 +40,7 @@ To compare I'm using two Ec2 intances:
   - [Creating a new reading](#creating-a-new-reading)
   - [Updating a reading](#updating-a-reading)
   - [Deleting a reading](#deleting-a-reading)
+  - [Initial fake data insertion](#initial-fake-data-insertion)
 - [License](#license)
 ## Requirements
 - Node.js (v18 or later)
@@ -163,8 +164,14 @@ NoSQL:
 SQL:
 - 1.0485 s
 
+### Initial fake data insertion:
+<img src="./docs/aws-nosql.png">
+<img src="./docs/aws-sql.png">
 
 
 ## License
 
 Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+
+
+### [Go to top](#project-energy-iot)
