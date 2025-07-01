@@ -56,6 +56,12 @@ This project is a NestJS application that serves as a RESTful API for managing e
 $ npm install
 ```
 
+Before the database setup, you need to create a `.env` file in the root directory of the project. You can use the `.env.example` file as a template. Make sure to set the environment variables for both MySQL and MongoDB connections. I created a docker-compose file to run both databases locally, you can use it to test the project.
+
+```bash
+docker-compose up -d
+```
+
 ## Database setup
 ### MySQL
 Migrate the database schema using Prisma:
