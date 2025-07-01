@@ -109,7 +109,7 @@ SQL:
 - 2.7101 s
 - 2.4061 s
 
-### Search in one month range:
+### Search in one month range (2025-06-29T12:00:00Z to 2025-07-29T12:00:00Z):
 NoSQL (863.163 registers):
 - 845.917 ms
 - 837.434 ms
@@ -118,7 +118,7 @@ SQL (863.307 registers):
 - 1.5945 s
 - 1.2670 s
 
-### Search by residence 1 in one month range:
+### Search by residence 1 in one month range (2025-06-29T12:00:00Z to 2025-07-29T12:00:00Z):
 NoSQL (4.330 registers):
 - 179.563 ms
 - 187.200 ms
@@ -127,7 +127,7 @@ SQL (4.262 registers):
 - 328.213 ms
 - 171.104 ms
 
-### Search by state 33 (RJ) in one month range:
+### Search by state 33 (RJ) in one month range (2025-06-29T12:00:00Z to 2025-07-29T12:00:00Z):
 NoSQL (337.069 registers):
 - 603.715 ms
 - 594.813 ms
@@ -136,7 +136,7 @@ SQL (262.996):
 - 1.1459 s
 - 925.286 ms
 
-### Search by utility company 4 in one month range:
+### Search by utility company 4 in one month range (2025-06-29T12:00:00Z to 2025-07-29T12:00:00Z):
 NoSQL (284.537 registers):
 - 553.321 ms
 
