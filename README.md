@@ -30,6 +30,7 @@ To compare I'm using two Ec2 intances:
   - [MongoDB](#mongodb)
 - [Compile and run the project](#compile-and-run-the-project)
 - [API Swagger Documentation](#api-swagger-documentation)
+- [Relational Conceptual Model](#relational-conceptual-model)
 - [Relational ERD](#relational-erd)
 - [Performance Tests - Consumer Energy Readings](#performance-tests---consumer-energy-readings)
   - [Total readings (1.000.000 registers)](#total-readings-1000000-registers)
@@ -101,6 +102,9 @@ $ npm run start:prod
 ## API Swagger Documentation
 To create a NestJS application that serves as a RESTful API for managing a collection of books, including features for adding, retrieving, updating, and deleting books: http://localhost:3000/api
 
+
+# Relational Conceptual Model
+<img src="./docs/conceitual.png">
 
 # Relational ERD
 <img src="./docs/model.png">
