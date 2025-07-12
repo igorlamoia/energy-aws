@@ -103,7 +103,7 @@ To create a NestJS application that serves as a RESTful API for managing a colle
 
 
 # Relational ERD
-<img src="./docs/prisma-erd.svg">
+<img src="./docs/model.png">
 
 # Performance Tests - Consumer Energy Readings
 ### Total readings (1.000.000 registers)
